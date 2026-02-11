@@ -4,20 +4,27 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 interface Category {
-    id: number;
+    id: string;
     name: string;
-    image: string;
+    image: string | null;
     slug: string;
     active: boolean;
+    children?: Category[];
+    _count?: { products: number };
 }
 
 export default function CategoryShowcase() {
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
-        fetch('/api/categories', { cache: 'no-store' })
+        fetch('/api/db/categories?tree=true', { cache: 'no-store' })
             .then((res) => res.json())
-            .then((data: Category[]) => setCategories(data.filter((c) => c.active)))
+            .then((data: Category[]) => {
+                if (Array.isArray(data)) {
+                    // Show top-level active categories
+                    setCategories(data.filter((c) => c.active));
+                }
+            })
             .catch(() => setCategories([]));
     }, []);
 

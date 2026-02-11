@@ -146,6 +146,20 @@ export async function PUT(request: NextRequest) {
             }
         }
 
+        // Single image shorthand (same as POST)
+        if (body.image && !body.images) {
+            // Delete existing images and create new one
+            await prisma.productImage.deleteMany({ where: { productId: product.id } });
+            await prisma.productImage.create({
+                data: {
+                    productId: product.id,
+                    url: body.image,
+                    alt: body.name,
+                    order: 0,
+                },
+            });
+        }
+
         const full = await prisma.product.findUnique({
             where: { id: product.id },
             include: { images: true, category: true },

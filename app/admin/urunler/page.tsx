@@ -272,7 +272,7 @@ export default function UrunlerAdmin() {
                                                     </span>
                                                 </div>
                                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                                                    <button onClick={() => setEditing({ ...item })} className="bg-white text-black text-[10px] uppercase tracking-wider font-semibold px-3 py-2 rounded hover:bg-neutral-200">Düzenle</button>
+                                                    <button onClick={() => setEditing({ ...item, image: item.image || item.images?.[0]?.url || '' })} className="bg-white text-black text-[10px] uppercase tracking-wider font-semibold px-3 py-2 rounded hover:bg-neutral-200">Düzenle</button>
                                                     <button onClick={() => toggleActive(item)} className="bg-white/90 text-black text-[10px] uppercase tracking-wider font-semibold px-3 py-2 rounded hover:bg-white">
                                                         {item.active ? 'Pasife Al' : 'Aktif Et'}
                                                     </button>

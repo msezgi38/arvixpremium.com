@@ -63,9 +63,16 @@ export default function MarkaLogoPage() {
                     <div className={`grid grid-cols-1 ${data.content.image ? 'lg:grid-cols-2' : ''} gap-12 items-center`}>
                         <div>
                             <h2 className="text-3xl md:text-4xl font-bold mb-8">{data.content.title}</h2>
-                            {data.content.paragraphs.map((para, i) => (
-                                <p key={i} className="text-base md:text-lg text-neutral-600 leading-relaxed mb-4">{para}</p>
-                            ))}
+                            {data.content.paragraphs.map((para, i) => {
+                                const parts = para.split(/\*\*(.*?)\*\*/g);
+                                return (
+                                    <p key={i} className="text-base md:text-lg text-neutral-600 leading-relaxed mb-4">
+                                        {parts.map((part, k) =>
+                                            k % 2 === 1 ? <strong key={k} className="text-neutral-800">{part}</strong> : part
+                                        )}
+                                    </p>
+                                );
+                            })}
                         </div>
                         {data.content.image && (
                             <div className="aspect-[4/3] bg-neutral-100 overflow-hidden">
