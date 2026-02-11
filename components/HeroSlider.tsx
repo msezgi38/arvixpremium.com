@@ -15,7 +15,7 @@ export default function HeroSlider() {
     const [currentSlide, setCurrentSlide] = useState(0);
 
     useEffect(() => {
-        fetch('/slides/slides.json')
+        fetch('/api/slides', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: Slide[]) => {
                 const activeSlides = data.filter((s) => s.active);

@@ -15,7 +15,7 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         Promise.all([
-            fetch('/slides/slides.json').then(r => r.json()).catch(() => []),
+            fetch('/api/slides').then(r => r.json()).catch(() => []),
             fetch('/categories/categories.json').then(r => r.json()).catch(() => []),
             fetch('/faq/faq.json').then(r => r.json()).catch(() => []),
             fetch('/blog/blog.json').then(r => r.json()).catch(() => []),

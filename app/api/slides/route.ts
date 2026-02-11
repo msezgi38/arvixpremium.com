@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = 'force-dynamic';
+
 const SLIDES_FILE = path.join(process.cwd(), 'public', 'slides', 'slides.json');
 
 function getSlides() {
@@ -20,7 +22,11 @@ function saveSlides(slides: unknown[]) {
 // GET - tüm slide'ları getir
 export async function GET() {
     const slides = getSlides();
-    return NextResponse.json(slides);
+    return NextResponse.json(slides, {
+        headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+    });
 }
 
 // POST - yeni slide ekle
