@@ -55,10 +55,15 @@ export default function AboutPage() {
     const [data, setData] = useState<AboutData | null>(null);
 
     useEffect(() => {
-        fetch('/about/about.json')
+        fetch('/api/db/settings?key=about', { cache: 'no-store' })
             .then((res) => res.json())
-            .then(setData)
-            .catch(() => setData(null));
+            .then((d) => {
+                if (d && Object.keys(d).length > 0) setData(d);
+                else return fetch('/about/about.json').then(r => r.json()).then(setData);
+            })
+            .catch(() => {
+                fetch('/about/about.json').then(r => r.json()).then(setData).catch(() => setData(null));
+            });
     }, []);
 
     if (!data) {

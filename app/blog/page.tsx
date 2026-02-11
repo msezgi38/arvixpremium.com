@@ -18,10 +18,16 @@ export default function BlogPage() {
     const [posts, setPosts] = useState<BlogPost[]>([]);
 
     useEffect(() => {
-        fetch('/blog/blog.json')
+        fetch('/api/db/blog', { cache: 'no-store' })
             .then((res) => res.json())
-            .then((data: BlogPost[]) => setPosts(data.filter((p) => p.active)))
-            .catch(() => setPosts([]));
+            .then((data: BlogPost[]) => {
+                const active = (Array.isArray(data) ? data : []).filter((p) => p.active);
+                if (active.length > 0) setPosts(active);
+                else return fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => setPosts(d.filter(p => p.active)));
+            })
+            .catch(() => {
+                fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => setPosts(d.filter(p => p.active))).catch(() => setPosts([]));
+            });
     }, []);
 
     const formatDate = (dateStr: string) => {

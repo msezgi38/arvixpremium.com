@@ -22,7 +22,7 @@ export default function HeroSlider() {
     const sliderRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
-        fetch('/api/slides', { cache: 'no-store' })
+        fetch('/api/db/slides', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: Slide[]) => {
                 const activeSlides = data.filter((s) => s.active);

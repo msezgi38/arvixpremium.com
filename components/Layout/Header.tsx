@@ -38,7 +38,7 @@ export default function Header() {
   const [ctaLink, setCtaLink] = useState('/iletisim');
 
   useEffect(() => {
-    fetch('/api/header', { cache: 'no-store' })
+    fetch('/api/db/settings?key=header', { cache: 'no-store' })
       .then(r => r.json())
       .then(data => {
         if (data.navLinks) setNavLinks(data.navLinks);

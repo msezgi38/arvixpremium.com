@@ -14,10 +14,16 @@ export default function SSSPage() {
     const [openId, setOpenId] = useState<number | null>(null);
 
     useEffect(() => {
-        fetch('/faq/faq.json')
+        fetch('/api/db/faq', { cache: 'no-store' })
             .then((res) => res.json())
-            .then((data: FaqItem[]) => setFaqs(data.filter((f) => f.active)))
-            .catch(() => setFaqs([]));
+            .then((data: FaqItem[]) => {
+                const active = (Array.isArray(data) ? data : []).filter((f) => f.active);
+                if (active.length > 0) setFaqs(active);
+                else return fetch('/faq/faq.json').then(r => r.json()).then((d: FaqItem[]) => setFaqs(d.filter(f => f.active)));
+            })
+            .catch(() => {
+                fetch('/faq/faq.json').then(r => r.json()).then((d: FaqItem[]) => setFaqs(d.filter(f => f.active))).catch(() => setFaqs([]));
+            });
     }, []);
 
     return (

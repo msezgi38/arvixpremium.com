@@ -41,10 +41,15 @@ export default function ContactPage() {
     const [sent, setSent] = useState(false);
 
     useEffect(() => {
-        fetch('/contact/contact.json')
+        fetch('/api/db/settings?key=contact', { cache: 'no-store' })
             .then((res) => res.json())
-            .then(setData)
-            .catch(() => setData(null));
+            .then((d) => {
+                if (d && Object.keys(d).length > 0) setData(d);
+                else return fetch('/contact/contact.json').then(r => r.json()).then(setData);
+            })
+            .catch(() => {
+                fetch('/contact/contact.json').then(r => r.json()).then(setData).catch(() => setData(null));
+            });
     }, []);
 
     const handleSubmit = (e: React.FormEvent) => {

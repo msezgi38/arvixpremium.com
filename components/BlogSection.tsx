@@ -17,7 +17,7 @@ export default function BlogSection() {
     const [posts, setPosts] = useState<BlogPost[]>([]);
 
     useEffect(() => {
-        fetch('/api/blog', { cache: 'no-store' })
+        fetch('/api/db/blog', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: BlogPost[]) => setPosts(data.filter((p) => p.active).slice(0, 3)))
             .catch(() => setPosts([]));

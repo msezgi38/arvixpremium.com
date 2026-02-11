@@ -21,10 +21,15 @@ export default function MarkaLogoPage() {
     const [data, setData] = useState<BrandData | null>(null);
 
     useEffect(() => {
-        fetch('/brand/brand.json')
+        fetch('/api/db/settings?key=brand', { cache: 'no-store' })
             .then((res) => res.json())
-            .then(setData)
-            .catch(() => setData(null));
+            .then((d) => {
+                if (d && Object.keys(d).length > 0) setData(d);
+                else return fetch('/brand/brand.json').then(r => r.json()).then(setData);
+            })
+            .catch(() => {
+                fetch('/brand/brand.json').then(r => r.json()).then(setData).catch(() => setData(null));
+            });
     }, []);
 
     if (!data) {

@@ -64,15 +64,28 @@ export default function BlogDetailPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/blog/blog.json')
+        fetch('/api/db/blog', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: BlogPost[]) => {
-                const activePosts = data.filter((p) => p.active);
-                setAllPosts(activePosts);
-                const found = activePosts.find((p) => p.slug === slug);
-                setPost(found || null);
+                const activePosts = (Array.isArray(data) ? data : []).filter((p) => p.active);
+                if (activePosts.length > 0) {
+                    setAllPosts(activePosts);
+                    setPost(activePosts.find((p) => p.slug === slug) || null);
+                } else {
+                    return fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => {
+                        const active = d.filter(p => p.active);
+                        setAllPosts(active);
+                        setPost(active.find(p => p.slug === slug) || null);
+                    });
+                }
             })
-            .catch(() => setPost(null))
+            .catch(() => {
+                fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => {
+                    const active = d.filter(p => p.active);
+                    setAllPosts(active);
+                    setPost(active.find(p => p.slug === slug) || null);
+                }).catch(() => setPost(null));
+            })
             .finally(() => setLoading(false));
     }, [slug]);
 

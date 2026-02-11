@@ -10,11 +10,24 @@ export default function MarkaLogoAdmin() {
     const [data, setData] = useState<BrandData>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/brand', { cache: 'no-store' }).then(r => r.json()).then(setData).catch(() => setData(null)); }, []);
+    useEffect(() => {
+        fetch('/api/db/settings?key=brand', { cache: 'no-store' })
+            .then(r => r.json())
+            .then(d => {
+                if (d && Object.keys(d).length > 0) setData(d);
+                else {
+                    fetch('/api/brand', { cache: 'no-store' }).then(r => r.json()).then(old => {
+                        setData(old);
+                        fetch('/api/db/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: 'brand', value: old }) });
+                    }).catch(() => setData({}));
+                }
+            })
+            .catch(() => setData(null));
+    }, []);
 
     const save = async () => {
-        const res = await fetch('/api/brand', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        if (res.ok) { setMsg('Kaydedildi!'); setTimeout(() => setMsg(''), 2000); }
+        const res = await fetch('/api/db/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: 'brand', value: data }) });
+        if (res.ok) { setMsg('✓ Kaydedildi!'); setTimeout(() => setMsg(''), 2000); }
     };
 
     if (!data) return <div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin" /></div>;
@@ -22,36 +35,39 @@ export default function MarkaLogoAdmin() {
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold">Marka & Logo Sayfası</h1>
+                <div>
+                    <h1 className="text-2xl font-bold">Marka & Logo Sayfası</h1>
+                    <p className="text-xs text-green-600 mt-1">● Veritabanı bağlantılı</p>
+                </div>
                 <button onClick={save} className="bg-black text-white text-xs uppercase tracking-wider px-5 py-2.5 hover:bg-neutral-800">Kaydet</button>
             </div>
-            {msg && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-2 mb-4 text-sm">{msg}</div>}
+            {msg && <div className="fixed top-6 right-6 z-50 bg-black text-white px-5 py-3 text-sm font-medium shadow-lg" style={{ animation: 'slideIn .3s ease-out' }}>{msg}</div>}
 
             <div className="space-y-6">
                 {/* Hero */}
-                <div className="bg-white border border-neutral-200 p-6 space-y-4">
+                <div className="bg-white border border-neutral-200 p-6 space-y-4 rounded-lg">
                     <h2 className="font-bold text-lg">Hero</h2>
-                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={data.hero?.title || ''} onChange={e => setData({ ...data, hero: { ...data.hero, title: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
-                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Alt Başlık</label><input value={data.hero?.subtitle || ''} onChange={e => setData({ ...data, hero: { ...data.hero, subtitle: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
+                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={data.hero?.title || ''} onChange={e => setData({ ...data, hero: { ...data.hero, title: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
+                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Alt Başlık</label><input value={data.hero?.subtitle || ''} onChange={e => setData({ ...data, hero: { ...data.hero, subtitle: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
                     <ImageUpload value={data.hero?.image || ''} onChange={url => setData({ ...data, hero: { ...data.hero, image: url } })} folder="brand" label="Hero Görseli" />
                 </div>
 
                 {/* Content */}
-                <div className="bg-white border border-neutral-200 p-6 space-y-4">
+                <div className="bg-white border border-neutral-200 p-6 space-y-4 rounded-lg">
                     <h2 className="font-bold text-lg">İçerik</h2>
-                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={data.content?.title || ''} onChange={e => setData({ ...data, content: { ...data.content, title: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
-                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Paragraflar (her satır ayrı paragraf)</label><textarea value={(data.content?.paragraphs || []).join('\n')} onChange={e => setData({ ...data, content: { ...data.content, paragraphs: e.target.value.split('\n') } })} rows={5} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
+                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={data.content?.title || ''} onChange={e => setData({ ...data, content: { ...data.content, title: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
+                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Paragraflar (her satır ayrı paragraf)</label><textarea value={(data.content?.paragraphs || []).join('\n')} onChange={e => setData({ ...data, content: { ...data.content, paragraphs: e.target.value.split('\n') } })} rows={5} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
                     <ImageUpload value={data.content?.image || ''} onChange={url => setData({ ...data, content: { ...data.content, image: url } })} folder="brand" label="İçerik Görseli" />
                 </div>
 
                 {/* Features */}
-                <div className="bg-white border border-neutral-200 p-6 space-y-4">
+                <div className="bg-white border border-neutral-200 p-6 space-y-4 rounded-lg">
                     <h2 className="font-bold text-lg">Özellikler</h2>
                     {(data.features || []).map((f: { id: number; title: string; description: string; image: string }, i: number) => (
                         <div key={i} className="border-b border-neutral-100 pb-4 space-y-3">
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={f.title} onChange={e => { const fs = [...data.features]; fs[i] = { ...fs[i], title: e.target.value }; setData({ ...data, features: fs }); }} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
-                                <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Açıklama</label><input value={f.description} onChange={e => { const fs = [...data.features]; fs[i] = { ...fs[i], description: e.target.value }; setData({ ...data, features: fs }); }} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
+                                <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={f.title} onChange={e => { const fs = [...data.features]; fs[i] = { ...fs[i], title: e.target.value }; setData({ ...data, features: fs }); }} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
+                                <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Açıklama</label><input value={f.description} onChange={e => { const fs = [...data.features]; fs[i] = { ...fs[i], description: e.target.value }; setData({ ...data, features: fs }); }} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
                             </div>
                             <ImageUpload value={f.image} onChange={url => { const fs = [...data.features]; fs[i] = { ...fs[i], image: url }; setData({ ...data, features: fs }); }} folder="brand" label="Özellik Görseli" />
                         </div>
@@ -59,16 +75,17 @@ export default function MarkaLogoAdmin() {
                 </div>
 
                 {/* CTA */}
-                <div className="bg-white border border-neutral-200 p-6 space-y-4">
+                <div className="bg-white border border-neutral-200 p-6 space-y-4 rounded-lg">
                     <h2 className="font-bold text-lg">CTA</h2>
-                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={data.cta?.title || ''} onChange={e => setData({ ...data, cta: { ...data.cta, title: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
-                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Alt Başlık</label><input value={data.cta?.subtitle || ''} onChange={e => setData({ ...data, cta: { ...data.cta, subtitle: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
+                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Başlık</label><input value={data.cta?.title || ''} onChange={e => setData({ ...data, cta: { ...data.cta, title: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
+                    <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Alt Başlık</label><input value={data.cta?.subtitle || ''} onChange={e => setData({ ...data, cta: { ...data.cta, subtitle: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Buton Yazısı</label><input value={data.cta?.buttonText || ''} onChange={e => setData({ ...data, cta: { ...data.cta, buttonText: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
-                        <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Buton Linki</label><input value={data.cta?.buttonLink || ''} onChange={e => setData({ ...data, cta: { ...data.cta, buttonLink: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black" /></div>
+                        <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Buton Yazısı</label><input value={data.cta?.buttonText || ''} onChange={e => setData({ ...data, cta: { ...data.cta, buttonText: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
+                        <div><label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">Buton Linki</label><input value={data.cta?.buttonLink || ''} onChange={e => setData({ ...data, cta: { ...data.cta, buttonLink: e.target.value } })} className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
                     </div>
                 </div>
             </div>
+            <style jsx>{`@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`}</style>
         </div>
     );
 }

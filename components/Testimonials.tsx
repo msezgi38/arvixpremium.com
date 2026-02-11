@@ -16,7 +16,7 @@ export default function Testimonials() {
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
     useEffect(() => {
-        fetch('/api/testimonials', { cache: 'no-store' })
+        fetch('/api/db/testimonials', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: Testimonial[]) => setTestimonials(data.filter((t) => t.active)))
             .catch(() => setTestimonials([]));
