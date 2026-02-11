@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 interface BlogPost {
-    id: number;
+    id: string;
     title: string;
     excerpt: string;
     image: string;
-    date: string;
     author: string;
     slug: string;
-    active: boolean;
+    published: boolean;
+    createdAt: string;
 }
 
 export default function BlogPage() {
@@ -21,13 +21,10 @@ export default function BlogPage() {
         fetch('/api/db/blog', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: BlogPost[]) => {
-                const active = (Array.isArray(data) ? data : []).filter((p) => p.active);
-                if (active.length > 0) setPosts(active);
-                else return fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => setPosts(d.filter(p => p.active)));
+                const published = (Array.isArray(data) ? data : []).filter((p) => p.published);
+                setPosts(published);
             })
-            .catch(() => {
-                fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => setPosts(d.filter(p => p.active))).catch(() => setPosts([]));
-            });
+            .catch(() => setPosts([]));
     }, []);
 
     const formatDate = (dateStr: string) => {
@@ -52,7 +49,7 @@ export default function BlogPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {posts.map((post) => (
                                 <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
-                                    <div className="aspect-[16/10] bg-neutral-100 overflow-hidden mb-4">
+                                    <div className="aspect-[16/10] bg-neutral-100 overflow-hidden mb-4 rounded-lg">
                                         {post.image ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img
@@ -68,7 +65,7 @@ export default function BlogPage() {
                                         )}
                                     </div>
                                     <p className="text-xs text-neutral-400 mb-2 uppercase tracking-wider">
-                                        {formatDate(post.date)} — {post.author}
+                                        {formatDate(post.createdAt)} {post.author && `— ${post.author}`}
                                     </p>
                                     <h3 className="text-lg font-bold mb-2 group-hover:text-neutral-600 transition-colors">
                                         {post.title}

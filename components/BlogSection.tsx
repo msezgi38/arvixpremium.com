@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 interface BlogPost {
-    id: number;
+    id: string;
     title: string;
     excerpt: string;
     image: string;
-    date: string;
+    createdAt: string;
     slug: string;
-    active: boolean;
+    published: boolean;
 }
 
 export default function BlogSection() {
@@ -19,7 +19,7 @@ export default function BlogSection() {
     useEffect(() => {
         fetch('/api/db/blog', { cache: 'no-store' })
             .then((res) => res.json())
-            .then((data: BlogPost[]) => setPosts(data.filter((p) => p.active).slice(0, 3)))
+            .then((data: BlogPost[]) => setPosts((Array.isArray(data) ? data : []).filter((p) => p.published).slice(0, 3)))
             .catch(() => setPosts([]));
     }, []);
 
@@ -72,7 +72,7 @@ export default function BlogSection() {
 
                             {/* Content */}
                             <p className="text-xs text-neutral-400 mb-2 uppercase tracking-wider">
-                                {formatDate(post.date)}
+                                {formatDate(post.createdAt)}
                             </p>
                             <h3 className="text-lg font-bold mb-2 group-hover:text-neutral-600 transition-colors">
                                 {post.title}

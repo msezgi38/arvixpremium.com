@@ -5,15 +5,15 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
 interface BlogPost {
-    id: number;
+    id: string;
     title: string;
     excerpt: string;
     content: string;
     image: string;
-    date: string;
     author: string;
     slug: string;
-    active: boolean;
+    published: boolean;
+    createdAt: string;
 }
 
 function renderMarkdown(text: string) {
@@ -31,7 +31,6 @@ function renderMarkdown(text: string) {
                 <ol key={i} className="list-decimal list-inside space-y-2 my-4 text-neutral-600">
                     {lines.filter(l => l.trim()).map((l, j) => {
                         const content = l.replace(/^\d+\.\s/, '');
-                        // Handle **bold**
                         const parts = content.split(/\*\*(.*?)\*\*/g);
                         return (
                             <li key={j} className="leading-relaxed">
@@ -42,6 +41,24 @@ function renderMarkdown(text: string) {
                         );
                     })}
                 </ol>
+            );
+        }
+        // Bullet lists
+        if (lines.every(l => /^[-•]\s/.test(l.trim()) || l.trim() === '')) {
+            return (
+                <ul key={i} className="list-disc list-inside space-y-2 my-4 text-neutral-600">
+                    {lines.filter(l => l.trim()).map((l, j) => {
+                        const content = l.replace(/^[-•]\s/, '');
+                        const parts = content.split(/\*\*(.*?)\*\*/g);
+                        return (
+                            <li key={j} className="leading-relaxed">
+                                {parts.map((part, k) =>
+                                    k % 2 === 1 ? <strong key={k}>{part}</strong> : part
+                                )}
+                            </li>
+                        );
+                    })}
+                </ul>
             );
         }
         // Regular paragraph with bold support
@@ -67,25 +84,11 @@ export default function BlogDetailPage() {
         fetch('/api/db/blog', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: BlogPost[]) => {
-                const activePosts = (Array.isArray(data) ? data : []).filter((p) => p.active);
-                if (activePosts.length > 0) {
-                    setAllPosts(activePosts);
-                    setPost(activePosts.find((p) => p.slug === slug) || null);
-                } else {
-                    return fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => {
-                        const active = d.filter(p => p.active);
-                        setAllPosts(active);
-                        setPost(active.find(p => p.slug === slug) || null);
-                    });
-                }
+                const published = (Array.isArray(data) ? data : []).filter((p) => p.published);
+                setAllPosts(published);
+                setPost(published.find((p) => p.slug === slug) || null);
             })
-            .catch(() => {
-                fetch('/blog/blog.json').then(r => r.json()).then((d: BlogPost[]) => {
-                    const active = d.filter(p => p.active);
-                    setAllPosts(active);
-                    setPost(active.find(p => p.slug === slug) || null);
-                }).catch(() => setPost(null));
-            })
+            .catch(() => setPost(null))
             .finally(() => setLoading(false));
     }, [slug]);
 
@@ -106,8 +109,8 @@ export default function BlogDetailPage() {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center gap-4">
                 <p className="text-neutral-500 text-lg">Blog yazısı bulunamadı.</p>
-                <Link href="/" className="text-sm uppercase tracking-wider font-semibold hover:text-neutral-600 transition-colors">
-                    ← Anasayfaya Dön
+                <Link href="/blog" className="text-sm uppercase tracking-wider font-semibold hover:text-neutral-600 transition-colors">
+                    ← Blog&apos;a Dön
                 </Link>
             </div>
         );
@@ -127,8 +130,11 @@ export default function BlogDetailPage() {
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="relative z-10 max-w-3xl mx-auto px-6 pb-12 w-full">
+                    <Link href="/blog" className="text-white/50 text-xs uppercase tracking-widest mb-4 inline-block hover:text-white/80 transition-colors">
+                        ← Blog
+                    </Link>
                     <p className="text-white/60 text-xs uppercase tracking-widest mb-3">
-                        {formatDate(post.date)} — {post.author}
+                        {formatDate(post.createdAt)} {post.author && `— ${post.author}`}
                     </p>
                     <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
                         {post.title}
@@ -139,11 +145,13 @@ export default function BlogDetailPage() {
             {/* Content */}
             <article className="py-16 md:py-24 bg-white">
                 <div className="max-w-3xl mx-auto px-6">
-                    <p className="text-lg md:text-xl text-neutral-500 leading-relaxed mb-8 border-l-4 border-black pl-4">
-                        {post.excerpt}
-                    </p>
+                    {post.excerpt && (
+                        <p className="text-lg md:text-xl text-neutral-500 leading-relaxed mb-8 border-l-4 border-black pl-4">
+                            {post.excerpt}
+                        </p>
+                    )}
                     <div className="prose-custom">
-                        {renderMarkdown(post.content)}
+                        {post.content ? renderMarkdown(post.content) : <p className="text-neutral-400">İçerik henüz eklenmemiş.</p>}
                     </div>
                 </div>
             </article>
@@ -156,7 +164,7 @@ export default function BlogDetailPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {otherPosts.map((p) => (
                                 <Link key={p.id} href={`/blog/${p.slug}`} className="group block">
-                                    <div className="aspect-[16/10] bg-neutral-200 overflow-hidden mb-4">
+                                    <div className="aspect-[16/10] bg-neutral-200 overflow-hidden mb-4 rounded-lg">
                                         {p.image ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
@@ -166,7 +174,7 @@ export default function BlogDetailPage() {
                                             </div>
                                         )}
                                     </div>
-                                    <p className="text-xs text-neutral-400 mb-1 uppercase tracking-wider">{formatDate(p.date)}</p>
+                                    <p className="text-xs text-neutral-400 mb-1 uppercase tracking-wider">{formatDate(p.createdAt)}</p>
                                     <h3 className="text-base font-bold group-hover:text-neutral-600 transition-colors">{p.title}</h3>
                                 </Link>
                             ))}
