@@ -14,7 +14,7 @@ export default function FooterAdmin() {
     const [data, setData] = useState<FooterData | null>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/footer').then(r => r.json()).then(setData).catch(() => { }); }, []);
+    useEffect(() => { fetch('/api/footer', { cache: 'no-store' }).then(r => r.json()).then(setData).catch(() => { }); }, []);
 
     const save = async () => {
         if (!data) return;

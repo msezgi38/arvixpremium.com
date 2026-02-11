@@ -44,7 +44,7 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     useEffect(() => {
-        fetch('/footer.json')
+        fetch('/api/footer', { cache: 'no-store' })
             .then(r => r.json())
             .then(d => setData({ ...defaultData, ...d }))
             .catch(() => { });

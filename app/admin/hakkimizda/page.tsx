@@ -10,7 +10,7 @@ export default function HakkimizdaAdmin() {
     const [data, setData] = useState<AboutData>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/about').then(r => r.json()).then(setData).catch(() => setData(null)); }, []);
+    useEffect(() => { fetch('/api/about', { cache: 'no-store' }).then(r => r.json()).then(setData).catch(() => setData(null)); }, []);
 
     const save = async () => {
         const res = await fetch('/api/about', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });

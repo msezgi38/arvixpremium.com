@@ -10,7 +10,7 @@ export default function BlogAdmin() {
     const [editing, setEditing] = useState<BlogPost | null>(null);
     const [msg, setMsg] = useState('');
 
-    const load = () => fetch('/api/blog').then(r => r.json()).then(setItems).catch(() => setItems([]));
+    const load = () => fetch('/api/blog', { cache: 'no-store' }).then(r => r.json()).then(setItems).catch(() => setItems([]));
     useEffect(() => { load(); }, []);
 
     const save = async () => {

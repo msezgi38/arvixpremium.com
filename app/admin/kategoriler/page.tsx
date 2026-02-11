@@ -10,7 +10,7 @@ export default function KategorilerAdmin() {
     const [editing, setEditing] = useState<Category | null>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/categories').then(r => r.json()).then(setItems).catch(() => setItems([])); }, []);
+    useEffect(() => { fetch('/api/categories', { cache: 'no-store' }).then(r => r.json()).then(setItems).catch(() => setItems([])); }, []);
 
     const save = async () => {
         if (!editing) return;
@@ -19,7 +19,7 @@ export default function KategorilerAdmin() {
         if (res.ok) {
             setMsg('Kaydedildi!');
             setEditing(null);
-            setItems(await fetch('/api/categories').then(r => r.json()));
+            setItems(await fetch('/api/categories', { cache: 'no-store' }).then(r => r.json()));
             setTimeout(() => setMsg(''), 2000);
         }
     };

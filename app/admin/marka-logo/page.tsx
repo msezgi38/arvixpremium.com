@@ -10,7 +10,7 @@ export default function MarkaLogoAdmin() {
     const [data, setData] = useState<BrandData>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/brand').then(r => r.json()).then(setData).catch(() => setData(null)); }, []);
+    useEffect(() => { fetch('/api/brand', { cache: 'no-store' }).then(r => r.json()).then(setData).catch(() => setData(null)); }, []);
 
     const save = async () => {
         const res = await fetch('/api/brand', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });

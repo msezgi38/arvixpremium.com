@@ -1,28 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 
-const categories = [
-  { name: 'Plaka Yüklemeli', slug: 'plaka-yuklemeli' },
-  { name: 'Pinli Aletler', slug: 'pinli-aletler' },
-  { name: 'Kardiyo', slug: 'kardiyo' },
-  { name: 'İstasyonlar', slug: 'istasyonlar' },
-  { name: 'Sehpa & Bench', slug: 'sehpa-bench' },
-  { name: 'Aksesuarlar', slug: 'aksesuarlar' },
-];
-
 interface NavLink { name: string; href: string; active: boolean; }
-interface SubItem { id: string; name: string; active: boolean; }
-interface CatCache { [slug: string]: SubItem[]; }
+interface SubCategory {
+  id: string;
+  name: string;
+  slug: string;
+  active: boolean;
+  _count?: { products: number };
+}
+interface MainCategory {
+  id: string;
+  name: string;
+  slug: string;
+  active: boolean;
+  children: SubCategory[];
+}
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [subItems, setSubItems] = useState<CatCache>({});
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [categories, setCategories] = useState<MainCategory[]>([]);
   const { totalItems } = useCart();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [navLinks, setNavLinks] = useState<NavLink[]>([
     { name: 'Biz Kimiz', href: '/hakkimizda', active: true },
     { name: 'Marka & Logo', href: '/marka-logo', active: true },
@@ -34,7 +38,7 @@ export default function Header() {
   const [ctaLink, setCtaLink] = useState('/iletisim');
 
   useEffect(() => {
-    fetch('/header.json')
+    fetch('/api/header', { cache: 'no-store' })
       .then(r => r.json())
       .then(data => {
         if (data.navLinks) setNavLinks(data.navLinks);
@@ -44,23 +48,26 @@ export default function Header() {
       .catch(() => { });
   }, []);
 
-  const fetchCategory = useCallback(async (slug: string) => {
-    if (subItems[slug]) return;
-    try {
-      const res = await fetch(`/products/${slug}.json`);
-      const data = await res.json();
-      const items: SubItem[] = (
-        data.products || data.subcategories || data.series || data.categories || []
-      ).filter((item: SubItem) => item.active);
-      setSubItems(prev => ({ ...prev, [slug]: items }));
-    } catch {
-      setSubItems(prev => ({ ...prev, [slug]: [] }));
-    }
-  }, [subItems]);
-
+  // Fetch categories from database
   useEffect(() => {
-    categories.forEach(cat => fetchCategory(cat.slug));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    fetch('/api/db/categories?tree=true', { cache: 'no-store' })
+      .then(r => r.json())
+      .then((data: MainCategory[]) => {
+        if (Array.isArray(data)) {
+          setCategories(data.filter(c => c.active));
+        }
+      })
+      .catch(() => setCategories([]));
+  }, []);
+
+  const handleMouseEnter = useCallback((slug: string) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setActiveCategory(slug);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    timeoutRef.current = setTimeout(() => setActiveCategory(null), 150);
+  }, []);
 
   const activeNavLinks = navLinks.filter(l => l.active);
 
@@ -111,8 +118,8 @@ export default function Header() {
               <div
                 key={cat.slug}
                 className="relative"
-                onMouseEnter={() => setActiveCategory(cat.slug)}
-                onMouseLeave={() => setActiveCategory(null)}
+                onMouseEnter={() => handleMouseEnter(cat.slug)}
+                onMouseLeave={handleMouseLeave}
               >
                 <Link
                   href={`/urunler/${cat.slug}`}
@@ -121,30 +128,78 @@ export default function Header() {
                 >
                   {i > 0 && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-3.5 bg-neutral-700" />}
                   {cat.name}
-                  {subItems[cat.slug] && subItems[cat.slug].length > 0 && (
+                  {cat.children && cat.children.length > 0 && (
                     <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-50"><path d="m6 9 6 6 6-6" /></svg>
                   )}
                   <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-white transition-all duration-300 ${activeCategory === cat.slug ? 'w-4/5' : 'w-0'
                     }`} />
                 </Link>
 
-                {/* Dropdown */}
-                {activeCategory === cat.slug && subItems[cat.slug] && subItems[cat.slug].length > 0 && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-0">
-                    <div className="bg-black border border-neutral-800 shadow-2xl shadow-black/50 min-w-[220px] py-2">
+                {/* Mega-Menu Dropdown */}
+                {activeCategory === cat.slug && cat.children && cat.children.length > 0 && (
+                  <div
+                    className="absolute top-full left-1/2 -translate-x-1/2 pt-0 z-50"
+                    onMouseEnter={() => handleMouseEnter(cat.slug)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="bg-black border border-neutral-800 shadow-2xl shadow-black/50 py-2" style={{ minWidth: cat.children.length > 7 ? '440px' : '220px' }}>
                       <div className="px-5 py-2 border-b border-neutral-800 mb-1">
                         <p className="text-[10px] font-semibold uppercase tracking-[2px] text-neutral-500">{cat.name}</p>
                       </div>
-                      {subItems[cat.slug].map((item) => (
-                        <Link
-                          key={item.id}
-                          href={`/urunler/${cat.slug}/${item.id.toLowerCase()}`}
-                          className="flex items-center gap-3 px-5 py-2.5 text-[12px] font-medium text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors group"
-                        >
-                          <span className="w-1 h-1 rounded-full bg-neutral-600 group-hover:bg-white transition-colors" />
-                          {item.name}
-                        </Link>
-                      ))}
+
+                      {cat.children.length > 7 ? (
+                        /* 2-Column Layout */
+                        <div className="grid grid-cols-2 gap-0">
+                          <div className="border-r border-neutral-800/50">
+                            {cat.children.slice(0, Math.ceil(cat.children.length / 2)).map((sub) => (
+                              <Link
+                                key={sub.id}
+                                href={`/urunler/${cat.slug}/${sub.slug}`}
+                                className="flex items-center gap-3 px-5 py-2.5 text-[12px] font-medium text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors group"
+                              >
+                                <span className="w-1 h-1 rounded-full bg-neutral-600 group-hover:bg-white transition-colors" />
+                                {sub.name}
+                                {sub._count && sub._count.products > 0 && (
+                                  <span className="ml-auto text-[9px] text-neutral-600">{sub._count.products}</span>
+                                )}
+                              </Link>
+                            ))}
+                          </div>
+                          <div>
+                            {cat.children.slice(Math.ceil(cat.children.length / 2)).map((sub) => (
+                              <Link
+                                key={sub.id}
+                                href={`/urunler/${cat.slug}/${sub.slug}`}
+                                className="flex items-center gap-3 px-5 py-2.5 text-[12px] font-medium text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors group"
+                              >
+                                <span className="w-1 h-1 rounded-full bg-neutral-600 group-hover:bg-white transition-colors" />
+                                {sub.name}
+                                {sub._count && sub._count.products > 0 && (
+                                  <span className="ml-auto text-[9px] text-neutral-600">{sub._count.products}</span>
+                                )}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        /* Single Column Layout */
+                        <div>
+                          {cat.children.map((sub) => (
+                            <Link
+                              key={sub.id}
+                              href={`/urunler/${cat.slug}/${sub.slug}`}
+                              className="flex items-center gap-3 px-5 py-2.5 text-[12px] font-medium text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors group"
+                            >
+                              <span className="w-1 h-1 rounded-full bg-neutral-600 group-hover:bg-white transition-colors" />
+                              {sub.name}
+                              {sub._count && sub._count.products > 0 && (
+                                <span className="ml-auto text-[9px] text-neutral-600">{sub._count.products}</span>
+                              )}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="border-t border-neutral-800 mt-1 pt-1">
                         <Link href={`/urunler/${cat.slug}`} className="block px-5 py-2 text-[11px] font-medium uppercase tracking-[1.5px] text-neutral-500 hover:text-white transition-colors">
                           Tümünü Gör →
@@ -184,14 +239,35 @@ export default function Header() {
                   {cat.name}
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform duration-200 ${mobileExpanded === cat.slug ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6" /></svg>
                 </button>
-                {mobileExpanded === cat.slug && subItems[cat.slug] && (
+                {mobileExpanded === cat.slug && cat.children && (
                   <div className="bg-neutral-900/60 pb-2">
-                    {subItems[cat.slug].map((item) => (
-                      <Link key={item.id} href={`/urunler/${cat.slug}/${item.id.toLowerCase()}`} className="flex items-center gap-2.5 px-8 py-2.5 text-[12px] font-medium text-neutral-500 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                        <span className="w-1 h-1 rounded-full bg-neutral-700" />
-                        {item.name}
-                      </Link>
-                    ))}
+                    {cat.children.length > 7 ? (
+                      <div className="grid grid-cols-2 gap-0">
+                        <div>
+                          {cat.children.slice(0, Math.ceil(cat.children.length / 2)).map((sub) => (
+                            <Link key={sub.id} href={`/urunler/${cat.slug}/${sub.slug}`} className="flex items-center gap-2.5 px-6 py-2.5 text-[12px] font-medium text-neutral-500 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                              <span className="w-1 h-1 rounded-full bg-neutral-700" />
+                              {sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                        <div>
+                          {cat.children.slice(Math.ceil(cat.children.length / 2)).map((sub) => (
+                            <Link key={sub.id} href={`/urunler/${cat.slug}/${sub.slug}`} className="flex items-center gap-2.5 px-6 py-2.5 text-[12px] font-medium text-neutral-500 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                              <span className="w-1 h-1 rounded-full bg-neutral-700" />
+                              {sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      cat.children.map((sub) => (
+                        <Link key={sub.id} href={`/urunler/${cat.slug}/${sub.slug}`} className="flex items-center gap-2.5 px-8 py-2.5 text-[12px] font-medium text-neutral-500 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                          <span className="w-1 h-1 rounded-full bg-neutral-700" />
+                          {sub.name}
+                        </Link>
+                      ))
+                    )}
                     <Link href={`/urunler/${cat.slug}`} className="block px-8 py-2 text-[11px] font-medium uppercase tracking-wider text-neutral-600 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>
                       Tümünü Gör →
                     </Link>

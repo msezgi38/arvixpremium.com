@@ -9,7 +9,7 @@ export default function SSSAdmin() {
     const [editing, setEditing] = useState<FaqItem | null>(null);
     const [msg, setMsg] = useState('');
 
-    const load = () => fetch('/api/faq').then(r => r.json()).then(setItems).catch(() => setItems([]));
+    const load = () => fetch('/api/faq', { cache: 'no-store' }).then(r => r.json()).then(setItems).catch(() => setItems([]));
     useEffect(() => { load(); }, []);
 
     const save = async () => {

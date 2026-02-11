@@ -9,7 +9,7 @@ export default function HeaderAdmin() {
     const [data, setData] = useState<HeaderData | null>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/header').then(r => r.json()).then(setData).catch(() => { }); }, []);
+    useEffect(() => { fetch('/api/header', { cache: 'no-store' }).then(r => r.json()).then(setData).catch(() => { }); }, []);
 
     const save = async () => {
         if (!data) return;

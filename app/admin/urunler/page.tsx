@@ -27,7 +27,7 @@ export default function UrunlerAdmin() {
 
     const load = () => {
         setLoading(true);
-        fetch(`/api/products/${selected}`)
+        fetch(`/api/products/${selected}`, { cache: 'no-store' })
             .then(r => r.json())
             .then(d => { setData(d); setLoading(false); })
             .catch(() => { setData(null); setLoading(false); });
@@ -119,8 +119,8 @@ export default function UrunlerAdmin() {
                                     key={cat.slug}
                                     onClick={() => setSelected(cat.slug)}
                                     className={`w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-xs transition-all ${selected === cat.slug
-                                            ? 'bg-black text-white font-semibold'
-                                            : 'text-neutral-600 hover:bg-neutral-50 hover:text-black'
+                                        ? 'bg-black text-white font-semibold'
+                                        : 'text-neutral-600 hover:bg-neutral-50 hover:text-black'
                                         }`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={cat.icon} /></svg>

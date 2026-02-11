@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = 'force-dynamic';
+
 const PRODUCTS_DIR = path.join(process.cwd(), 'public', 'products');
 
 export async function GET(
@@ -12,7 +14,9 @@ export async function GET(
     const file = path.join(PRODUCTS_DIR, `${category}.json`);
     try {
         const data = JSON.parse(fs.readFileSync(file, 'utf-8'));
-        return NextResponse.json(data);
+        return NextResponse.json(data, {
+            headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' },
+        });
     } catch {
         return NextResponse.json({ error: 'Bulunamadı' }, { status: 404 });
     }

@@ -15,7 +15,7 @@ export default function CategoryShowcase() {
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
-        fetch('/categories/categories.json')
+        fetch('/api/categories', { cache: 'no-store' })
             .then((res) => res.json())
             .then((data: Category[]) => setCategories(data.filter((c) => c.active)))
             .catch(() => setCategories([]));

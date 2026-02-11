@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = 'force-dynamic';
+
 const FILE = path.join(process.cwd(), 'public', 'blog', 'blog.json');
 const DIR = path.join(process.cwd(), 'public', 'blog');
 
@@ -13,7 +15,11 @@ function saveData(data: unknown[]) {
     fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
 }
 
-export async function GET() { return NextResponse.json(getData()); }
+export async function GET() {
+    return NextResponse.json(getData(), {
+        headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' },
+    });
+}
 
 export async function POST(request: NextRequest) {
     try {

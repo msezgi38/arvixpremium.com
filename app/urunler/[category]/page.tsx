@@ -4,51 +4,37 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
-interface Product {
+interface SubCategory {
     id: string;
     name: string;
-    oldName?: string;
-    description?: string;
-    image: string;
+    slug: string;
+    image: string | null;
+    description: string | null;
     active: boolean;
-}
-
-interface Subcategory {
-    id: string;
-    name: string;
-    code?: string;
-    oldName?: string;
-    image: string;
-    active: boolean;
+    _count?: { products: number };
 }
 
 interface CategoryData {
-    hero: { title: string; subtitle: string; image: string };
-    products?: Product[];
-    subcategories?: Subcategory[];
-    series?: Subcategory[];
-    categories?: Subcategory[];
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    image: string | null;
+    children: SubCategory[];
+    _count?: { products: number };
 }
 
-const validSlugs = [
-    'plaka-yuklemeli', 'pinli-aletler', 'kardiyo',
-    'istasyonlar', 'sehpa-bench', 'aksesuarlar', 'yeni-urunler',
-];
-
-export default function ProductCategoryPage() {
+export default function CategoryPage() {
     const params = useParams();
     const slug = params.category as string;
     const [data, setData] = useState<CategoryData | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!slug || !validSlugs.includes(slug)) {
-            setLoading(false);
-            return;
-        }
-        fetch(`/products/${slug}.json`)
-            .then((res) => res.json())
-            .then(setData)
+        if (!slug) { setLoading(false); return; }
+        fetch(`/api/db/categories?slug=${slug}`, { cache: 'no-store' })
+            .then(r => r.json())
+            .then(d => { if (d.error) setData(null); else setData(d); })
             .catch(() => setData(null))
             .finally(() => setLoading(false));
     }, [slug]);
@@ -64,61 +50,59 @@ export default function ProductCategoryPage() {
     if (!data) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <p className="text-neutral-500">Sayfa bulunamadı</p>
+                <p className="text-neutral-500">Kategori bulunamadı</p>
             </div>
         );
     }
 
-    const items = data.products || data.subcategories || data.series || data.categories || [];
-    const activeItems = items.filter((item) => item.active);
+    const activeChildren = data.children?.filter(c => c.active) || [];
 
     return (
         <>
             {/* Hero */}
             <section className="relative min-h-[400px] flex items-center justify-center text-white overflow-hidden">
                 <div className="absolute inset-0 bg-neutral-900">
-                    {data.hero.image && (
+                    {data.image && (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={data.hero.image} alt="" className="w-full h-full object-cover" />
+                        <img src={data.image} alt="" className="w-full h-full object-cover opacity-50" />
                     )}
                 </div>
                 <div className="absolute inset-0 bg-black/60" />
                 <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                    <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">{data.hero.title}</h1>
-                    <p className="text-lg md:text-xl text-white/70">{data.hero.subtitle}</p>
+                    <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">{data.name}</h1>
+                    {data.description && <p className="text-lg md:text-xl text-white/70">{data.description}</p>}
                     <p className="mt-4 text-sm text-white/50">
-                        {activeItems.length} ürün
+                        {activeChildren.length} alt kategori
                     </p>
                 </div>
             </section>
 
-            {/* Products Grid */}
+            {/* Subcategories Grid */}
             <section className="py-20 md:py-28 bg-white">
                 <div className="max-w-6xl mx-auto px-6">
-                    {activeItems.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {activeItems.map((item) => (
-                                <Link key={item.id} href={`/urunler/${slug}/${item.id.toLowerCase()}`} className="group border border-neutral-200 bg-white hover:shadow-lg transition-shadow duration-300">
-                                    <div className="aspect-square bg-neutral-100 overflow-hidden">
-                                        {item.image ? (
+                    {activeChildren.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {activeChildren.map((sub) => (
+                                <Link key={sub.id} href={`/urunler/${slug}/${sub.slug}`} className="group border border-neutral-200 bg-white hover:shadow-lg transition-all duration-300">
+                                    <div className="aspect-square bg-neutral-100 overflow-hidden relative">
+                                        {sub.image ? (
                                             // eslint-disable-next-line @next/next/no-img-element
-                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <img src={sub.image} alt={sub.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-neutral-300">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200">
+                                                <span className="text-3xl font-black text-neutral-300 uppercase tracking-wider">{sub.name}</span>
+                                            </div>
+                                        )}
+                                        {sub._count && sub._count.products > 0 && (
+                                            <div className="absolute top-3 right-3 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded">
+                                                {sub._count.products} ürün
                                             </div>
                                         )}
                                     </div>
                                     <div className="p-5">
-                                        <h3 className="text-base font-bold uppercase tracking-wider">{item.name}</h3>
-                                        {'code' in item && (item as Subcategory).code && (
-                                            <p className="text-xs text-neutral-400 mt-1 uppercase tracking-wider">{(item as Subcategory).code}</p>
-                                        )}
-                                        {'oldName' in item && item.oldName && (
-                                            <p className="text-xs text-neutral-400 mt-1">Eski: {item.oldName}</p>
-                                        )}
-                                        {'description' in item && (item as Product).description && (
-                                            <p className="text-sm text-neutral-600 mt-2">{(item as Product).description}</p>
+                                        <h3 className="text-base font-bold uppercase tracking-wider">{sub.name}</h3>
+                                        {sub.description && (
+                                            <p className="text-sm text-neutral-500 mt-1">{sub.description}</p>
                                         )}
                                     </div>
                                 </Link>
@@ -126,8 +110,8 @@ export default function ProductCategoryPage() {
                         </div>
                     ) : (
                         <div className="text-center py-16 text-neutral-500">
-                            <p className="text-lg mb-4">Bu kategoride henüz ürün bulunmuyor.</p>
-                            <p className="text-sm">Admin panelinden ürün ekleyebilirsiniz.</p>
+                            <p className="text-lg mb-4">Bu kategoride henüz alt kategori bulunmuyor.</p>
+                            <p className="text-sm">Admin panelinden kategori ekleyebilirsiniz.</p>
                         </div>
                     )}
                 </div>

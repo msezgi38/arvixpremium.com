@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = 'force-dynamic';
+
 const BRAND_FILE = path.join(process.cwd(), 'public', 'brand', 'brand.json');
 const BRAND_DIR = path.join(process.cwd(), 'public', 'brand');
 
@@ -10,7 +12,9 @@ function getData() {
 }
 
 export async function GET() {
-    return NextResponse.json(getData());
+    return NextResponse.json(getData(), {
+        headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' },
+    });
 }
 
 export async function PUT(request: NextRequest) {

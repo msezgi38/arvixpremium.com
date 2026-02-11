@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = 'force-dynamic';
+
 const CATEGORIES_FILE = path.join(process.cwd(), 'public', 'categories', 'categories.json');
 const CATEGORIES_DIR = path.join(process.cwd(), 'public', 'categories');
 
@@ -23,7 +25,9 @@ function saveCategories(categories: unknown[]) {
 
 // GET
 export async function GET() {
-    return NextResponse.json(getCategories());
+    return NextResponse.json(getCategories(), {
+        headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' },
+    });
 }
 
 // POST - yeni kategori ekle

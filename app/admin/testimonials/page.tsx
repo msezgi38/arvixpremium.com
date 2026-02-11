@@ -10,7 +10,7 @@ export default function TestimonialsAdmin() {
     const [editing, setEditing] = useState<Testimonial | null>(null);
     const [msg, setMsg] = useState('');
 
-    const load = () => fetch('/api/testimonials').then(r => r.json()).then(setItems).catch(() => setItems([]));
+    const load = () => fetch('/api/testimonials', { cache: 'no-store' }).then(r => r.json()).then(setItems).catch(() => setItems([]));
     useEffect(() => { load(); }, []);
 
     const save = async () => {

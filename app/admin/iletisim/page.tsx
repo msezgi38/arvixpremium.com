@@ -10,7 +10,7 @@ export default function IletisimAdmin() {
     const [data, setData] = useState<ContactData>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/contact').then(r => r.json()).then(setData).catch(() => setData(null)); }, []);
+    useEffect(() => { fetch('/api/contact', { cache: 'no-store' }).then(r => r.json()).then(setData).catch(() => setData(null)); }, []);
 
     const save = async () => {
         const res = await fetch('/api/contact', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });

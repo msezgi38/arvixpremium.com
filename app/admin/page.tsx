@@ -15,10 +15,10 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         Promise.all([
-            fetch('/api/slides').then(r => r.json()).catch(() => []),
-            fetch('/categories/categories.json').then(r => r.json()).catch(() => []),
-            fetch('/faq/faq.json').then(r => r.json()).catch(() => []),
-            fetch('/blog/blog.json').then(r => r.json()).catch(() => []),
+            fetch('/api/slides', { cache: 'no-store' }).then(r => r.json()).catch(() => []),
+            fetch('/api/categories', { cache: 'no-store' }).then(r => r.json()).catch(() => []),
+            fetch('/api/faq', { cache: 'no-store' }).then(r => r.json()).catch(() => []),
+            fetch('/api/blog', { cache: 'no-store' }).then(r => r.json()).catch(() => []),
         ]).then(([slides, cats, faq, blog]) => {
             setStats({
                 slides: Array.isArray(slides) ? slides.length : 0,
