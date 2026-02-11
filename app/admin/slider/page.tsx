@@ -10,7 +10,17 @@ export default function SliderAdmin() {
     const [editing, setEditing] = useState<Slide | null>(null);
     const [msg, setMsg] = useState('');
 
-    useEffect(() => { fetch('/api/slides').then(r => r.json()).then(setSlides).catch(() => setSlides([])); }, []);
+    const loadSlides = async () => {
+        try {
+            const res = await fetch('/api/slides', { cache: 'no-store' });
+            const data = await res.json();
+            setSlides(data);
+        } catch {
+            setSlides([]);
+        }
+    };
+
+    useEffect(() => { loadSlides(); }, []);
 
     const save = async () => {
         if (!editing) return;
@@ -19,8 +29,7 @@ export default function SliderAdmin() {
         if (res.ok) {
             setMsg('Kaydedildi!');
             setEditing(null);
-            const data = await fetch('/api/slides').then(r => r.json());
-            setSlides(data);
+            await loadSlides();
             setTimeout(() => setMsg(''), 2000);
         }
     };
