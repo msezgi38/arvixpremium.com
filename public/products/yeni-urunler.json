@@ -1,0 +1,17 @@
+{
+    "hero": {
+        "title": "Yeni Ürünler",
+        "subtitle": "En son eklenen fitness ekipmanları",
+        "image": "/products/yeni-urunler/hero.jpg"
+    },
+    "products": [
+        {
+            "id": "MBH",
+            "name": "Yeni Ürünler",
+            "oldName": "MBH Yeni Ürün",
+            "description": "Yeni nesil fitness ekipmanı",
+            "image": "/products/yeni-urunler/mbh.jpg",
+            "active": true
+        }
+    ]
+}

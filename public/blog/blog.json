@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "title": "Spor Salonu Ekipman Seçimi Rehberi",
+        "excerpt": "Profesyonel bir spor salonu kurarken dikkat edilmesi gereken ekipman seçim kriterleri ve öneriler.",
+        "content": "Profesyonel bir spor salonu kurarken doğru ekipman seçimi, yatırımınızın başarısını doğrudan etkiler. İşte dikkat etmeniz gereken temel kriterler:\n\n## 1. Kullanım Yoğunluğu\n\nTicari bir spor salonu, ev tipi ekipmanlardan çok daha yoğun kullanılır. Bu nedenle ticari sınıf (commercial grade) ekipmanlar tercih edilmelidir. Günde 12-16 saat kesintisiz çalışabilecek dayanıklılıkta olmaları şarttır.\n\n## 2. Mekanik Dayanıklılık\n\nÇelik kalınlığı, kaynak kalitesi ve rulman sistemleri ekipmanın ömrünü belirler. Minimum 2.5mm çelik profil ve yüksek kalite rulmanlar aranmalıdır.\n\n## 3. Ergonomi\n\nKullanıcı konforu ve hareket biyomekaniği göz önünde bulundurulmalıdır. Doğru açılar ve ayarlanabilir pozisyonlar yaralanma riskini minimuma indirir.\n\n## 4. Marka Bütünlüğü\n\nTüm ekipmanlarınızın aynı renk ve logo ile uyumlu olması, salonunuzun profesyonel görünümünü güçlendirir. Arvix olarak tüm ürünlerde kurumsal kimlik entegrasyonu sunuyoruz.\n\n## 5. Garanti ve Servis\n\nSatış sonrası destek, yedek parça temini ve teknik servis imkanları mutlaka değerlendirilmelidir.",
+        "image": "/blog/blog1.jpg",
+        "date": "2025-01-15",
+        "author": "Arvix Ekibi",
+        "slug": "spor-salonu-ekipman-secimi",
+        "active": true
+    },
+    {
+        "id": 2,
+        "title": "Kendi Markanızla Fitness Ekipmanı Üretimi",
+        "excerpt": "OEM ve ODM süreçleri hakkında bilmeniz gereken her şey. Kendi markanızı oluşturmanın adımları.",
+        "content": "Fitness sektöründe kendi markanızla yer almak, hem maliyet avantajı hem de marka değeri açısından büyük kazanımlar sağlar.\n\n## OEM Nedir?\n\nOEM (Original Equipment Manufacturer), üretici fabrikanın sizin markanız ve logonuz ile ürün üretmesidir. Arvix bu süreçte köprü görevi görerek, üretici fabrikalarla doğrudan iş birliği yapar.\n\n## ODM Nedir?\n\nODM (Original Design Manufacturer), fabrikanın hem tasarım hem de üretim sürecini yürütmesidir. Mevcut tasarımlar üzerine markalama yapılır.\n\n## Süreç Nasıl İşler?\n\n1. **Konsept Belirleme**: Hedef kitlenizi ve salon konseptinizi belirleyin\n2. **Ürün Seçimi**: İhtiyacınıza uygun modelleri seçin\n3. **Logo ve Renk**: Kurumsal kimliğinizi belirleyin\n4. **Üretim**: Fabrika üretim sürecini başlatır (30-75 gün)\n5. **Sevkiyat**: Lojistik ve gümrük süreçleri yönetilir\n6. **Teslimat**: Ekipmanlarınız salonunuza teslim edilir\n\n## Maliyet Avantajı\n\nAracı marka ve distribütör zincirlerini ortadan kaldırarak, piyasaya kıyasla %20-40 oranında maliyet avantajı sağlanır.",
+        "image": "/blog/blog2.jpg",
+        "date": "2025-02-01",
+        "author": "Arvix Ekibi",
+        "slug": "kendi-markanizla-uretim",
+        "active": true
+    },
+    {
+        "id": 3,
+        "title": "2025 Fitness Trendleri",
+        "excerpt": "Bu yıl öne çıkan fitness ekipman trendleri ve spor salonu tasarım yaklaşımları.",
+        "content": "2025 yılında fitness sektörü hızla dönüşmeye devam ediyor. İşte öne çıkan ekipman trendleri ve tasarım yaklaşımları:\n\n## 1. Akıllı Ekipmanlar\n\nDokunmatik ekranlar, performans takibi ve uygulama entegrasyonu artık standart özellikler haline geliyor. Kardiyo aletlerinde Netflix, YouTube ve fitness uygulamaları desteği bekleniyor.\n\n## 2. Kompakt Tasarımlar\n\nŞehir merkezlerindeki butik stüdyolar için alan tasarrufu sağlayan kompakt ve çok fonksiyonlu ekipmanlar talep görüyor.\n\n## 3. Sürdürülebilirlik\n\nGeri dönüştürülmüş malzemeler ve enerji üretebilen kardiyo aletleri çevre bilincini ön plana çıkarıyor.\n\n## 4. Fonksiyonel Antrenman\n\nGeleneksel makinelerin yanı sıra fonksiyonel antrenman alanları ve serbest ağırlık bölgeleri daha fazla yer kaplıyor.\n\n## 5. Estetik Tasarım\n\nSpor salonları artık sadece antrenman mekanı değil, sosyal alanlar. Premium malzemeler, özel aydınlatma ve kurumsal renk uyumu önem kazanıyor.\n\nArvix olarak bu trendleri yakından takip ediyor ve müşterilerimize en güncel ekipman çözümlerini sunuyoruz.",
+        "image": "/blog/blog3.jpg",
+        "date": "2025-02-10",
+        "author": "Arvix Ekibi",
+        "slug": "2025-fitness-trendleri",
+        "active": true
+    }
+]

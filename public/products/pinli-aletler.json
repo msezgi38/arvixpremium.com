@@ -1,0 +1,137 @@
+{
+    "hero": {
+        "title": "Pinli (Selectorized) Aletler",
+        "subtitle": "Kolay ağırlık ayarı ile profesyonel pinli ekipmanlar",
+        "image": "/products/pinli-aletler/hero.jpg"
+    },
+    "products": [
+        {
+            "id": "DSL1",
+            "name": "DSL 1",
+            "oldName": "CFU",
+            "description": "Dual selectorized alet",
+            "image": "/products/pinli-aletler/dsl1.jpg",
+            "active": true
+        },
+        {
+            "id": "DSL2",
+            "name": "DSL 2",
+            "oldName": "T8",
+            "description": "Dual selectorized alet",
+            "image": "/products/pinli-aletler/dsl2.jpg",
+            "active": true
+        },
+        {
+            "id": "DSL3",
+            "name": "DSL 3",
+            "oldName": "ZMU",
+            "description": "Dual selectorized alet",
+            "image": "/products/pinli-aletler/dsl3.jpg",
+            "active": true
+        },
+        {
+            "id": "SL0",
+            "name": "SL0",
+            "oldName": "AM5",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl0.jpg",
+            "active": true
+        },
+        {
+            "id": "SL1",
+            "name": "SL1",
+            "oldName": "M1",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl1.jpg",
+            "active": true
+        },
+        {
+            "id": "SL2",
+            "name": "SL2",
+            "oldName": "M10U",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl2.jpg",
+            "active": true
+        },
+        {
+            "id": "SL3",
+            "name": "SL3",
+            "oldName": "MEL",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl3.jpg",
+            "active": true
+        },
+        {
+            "id": "SL4",
+            "name": "SL4",
+            "oldName": "M8U",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl4.jpg",
+            "active": true
+        },
+        {
+            "id": "SL5",
+            "name": "SL5",
+            "oldName": "SNU",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl5.jpg",
+            "active": true
+        },
+        {
+            "id": "SL6",
+            "name": "SL6",
+            "oldName": "XMTM",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl6.jpg",
+            "active": true
+        },
+        {
+            "id": "SL7",
+            "name": "SL7",
+            "oldName": "M5U",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl7.jpg",
+            "active": true
+        },
+        {
+            "id": "SL8",
+            "name": "SL8",
+            "oldName": "M6U",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl8.jpg",
+            "active": true
+        },
+        {
+            "id": "SL9",
+            "name": "SL9",
+            "oldName": "ASL",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl9.jpg",
+            "active": true
+        },
+        {
+            "id": "SL0X",
+            "name": "SL0X",
+            "oldName": "73",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/sl0x.jpg",
+            "active": true
+        },
+        {
+            "id": "SLV",
+            "name": "SLV",
+            "oldName": "ACF",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/slv.jpg",
+            "active": true
+        },
+        {
+            "id": "SLC",
+            "name": "SLC",
+            "oldName": "AZM",
+            "description": "Pinli selectorized alet",
+            "image": "/products/pinli-aletler/slc.jpg",
+            "active": true
+        }
+    ]
+}

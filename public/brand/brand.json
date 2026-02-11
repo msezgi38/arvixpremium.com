@@ -1,0 +1,42 @@
+{
+    "hero": {
+        "title": "Kendi Marka ve Logonu Oluştur",
+        "subtitle": "Fitness ekipmanlarını kendi markanızla pazara sunun",
+        "image": "/brand/hero.jpg",
+        "overlayOpacity": 0.6
+    },
+    "content": {
+        "title": "Markanızı Oluşturun",
+        "paragraphs": [
+            "Arvix olarak, fitness ekipmanlarınızı kendi marka kimliğinizle üretmenize olanak tanıyoruz. Fabrika direkt çalışma modelimiz sayesinde, logonuz ve kurumsal kimliğiniz ekipmanlara entegre edilir.",
+            "Logo uygulaması lazer kesim, metal plaka, baskı veya özel etiketleme yöntemleriyle gerçekleştirilir. Renk özelleştirme ile makine gövdesi, kaplama, döşeme ve plastik aksamlar kurumsal renklerinize uygun üretilir."
+        ],
+        "image": "/brand/branding.jpg"
+    },
+    "features": [
+        {
+            "id": 1,
+            "title": "Logo Entegrasyonu",
+            "description": "Lazer kesim, metal plaka, baskı veya özel etiketleme ile ekipmanlara logo uygulanır.",
+            "image": "/brand/logo.jpg"
+        },
+        {
+            "id": 2,
+            "title": "Renk Özelleştirme",
+            "description": "Makine gövdesi, kaplama, döşeme ve plastik aksamlar kurumsal renklerinize uygun üretilir.",
+            "image": "/brand/color.jpg"
+        },
+        {
+            "id": 3,
+            "title": "Marka Kimliği",
+            "description": "Güçlü bir marka kimliği ile pazarda fark yaratın. Tüm ekipmanlar size özel üretilir.",
+            "image": "/brand/identity.jpg"
+        }
+    ],
+    "cta": {
+        "title": "Kendi Markanızı Oluşturmak İçin Hemen İletişime Geçin",
+        "subtitle": "Uzman ekibimiz markalama sürecinizde yanınızda.",
+        "buttonText": "Teklif Al",
+        "buttonLink": "/iletisim"
+    }
+}

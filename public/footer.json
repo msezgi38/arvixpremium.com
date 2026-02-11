@@ -1,0 +1,47 @@
+{
+    "company": {
+        "name": "ARVIX",
+        "description": "Profesyonel fitness ekipmanları tedarikçisi"
+    },
+    "quickLinks": [
+        {
+            "name": "Hakkımızda",
+            "href": "/hakkimizda"
+        },
+        {
+            "name": "Kendi Markanı Oluştur",
+            "href": "/marka-logo"
+        },
+        {
+            "name": "SSS",
+            "href": "/sss"
+        },
+        {
+            "name": "İletişim",
+            "href": "/iletisim"
+        }
+    ],
+    "contact": {
+        "email": "info@arvixpremium.com",
+        "phone": "+90 XXX XXX XX XX",
+        "address": "İstanbul, Türkiye"
+    },
+    "copyright": "Arvix Premium. Tüm hakları saklıdır.",
+    "socialLinks": [
+        {
+            "name": "Instagram",
+            "url": "#",
+            "active": true
+        },
+        {
+            "name": "LinkedIn",
+            "url": "#",
+            "active": true
+        },
+        {
+            "name": "YouTube",
+            "url": "#",
+            "active": true
+        }
+    ]
+}

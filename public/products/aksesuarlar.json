@@ -1,0 +1,38 @@
+{
+    "hero": {
+        "title": "Aksesuarlar",
+        "subtitle": "Fitness salonunuz için tüm aksesuarlar",
+        "image": "/products/aksesuarlar/hero.jpg"
+    },
+    "categories": [
+        {
+            "id": "arvy",
+            "name": "Dumbbell ve Plakalar",
+            "code": "ARVY",
+            "image": "/products/aksesuarlar/arvy.jpg",
+            "active": true
+        },
+        {
+            "id": "arvx",
+            "name": "Bar ve Aksesuarlar",
+            "code": "ARVX",
+            "image": "/products/aksesuarlar/arvx.jpg",
+            "active": true
+        },
+        {
+            "id": "arvz",
+            "name": "Strength Training",
+            "code": "ARVZ",
+            "image": "/products/aksesuarlar/arvz.jpg",
+            "active": true
+        },
+        {
+            "id": "arvq",
+            "name": "Yoga Pilates Ekipmanları",
+            "code": "ARVQ",
+            "image": "/products/aksesuarlar/arvq.jpg",
+            "active": true
+        }
+    ],
+    "products": []
+}

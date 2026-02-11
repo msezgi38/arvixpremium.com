@@ -1,0 +1,40 @@
+{
+    "hero": {
+        "title": "Kardiyo Aletleri",
+        "subtitle": "Yüksek performanslı kardiyo ekipmanları ile salonunuzu donatın",
+        "image": "/products/kardiyo/hero.jpg"
+    },
+    "subcategories": [
+        {
+            "id": "kosu-bandi",
+            "name": "Koşu Bandı",
+            "image": "/products/kardiyo/kosu-bandi.jpg",
+            "active": true
+        },
+        {
+            "id": "eliptik",
+            "name": "Eliptik Aletler",
+            "image": "/products/kardiyo/eliptik.jpg",
+            "active": true
+        },
+        {
+            "id": "merdivenler",
+            "name": "Merdivenler",
+            "image": "/products/kardiyo/merdivenler.jpg",
+            "active": true
+        },
+        {
+            "id": "bisiklet",
+            "name": "Bisikletler",
+            "image": "/products/kardiyo/bisiklet.jpg",
+            "active": true
+        },
+        {
+            "id": "air-serisi",
+            "name": "Air Serisi",
+            "image": "/products/kardiyo/air-serisi.jpg",
+            "active": true
+        }
+    ],
+    "products": []
+}

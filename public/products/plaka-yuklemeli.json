@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "title": "Plaka Yüklemeli Aletler",
+    "subtitle": "Profesyonel kullanım için tasarlanmış, yüksek dayanıklılıkta plaka yüklemeli ekipmanlar",
+    "image": "/products/plaka-yuklemeli/hero.jpg"
+  },
+  "products": [
+    {
+      "id": "PLX",
+      "name": "PLX",
+      "oldName": "",
+      "description": "Kompakt tasarımlı plaka yüklemeli alet",
+      "image": "/products/plaka-yuklemeli/plx.jpg",
+      "active": true
+    },
+    {
+      "id": "PL1",
+      "name": "PL1",
+      "oldName": "",
+      "description": "Profesyonel plaka yüklemeli alet",
+      "image": "/products/plaka-yuklemeli/pl1.jpg",
+      "active": true
+    },
+    {
+      "id": "PL2",
+      "name": "PL2",
+      "oldName": "XVS",
+      "description": "Gelişmiş plaka yüklemeli alet",
+      "image": "/products/plaka-yuklemeli/pl2.jpg",
+      "active": true
+    },
+    {
+      "id": "PL3",
+      "name": "PL3",
+      "oldName": "Metta1",
+      "description": "Yüksek performanslı plaka yüklemeli alet",
+      "image": "/products/plaka-yuklemeli/pl3.jpg",
+      "active": true
+    },
+    {
+      "id": "PL4",
+      "name": "PL4",
+      "oldName": "Metta2",
+      "description": "Premium plaka yüklemeli alet",
+      "image": "/products/plaka-yuklemeli/pl4.jpg",
+      "active": true
+    },
+    {
+      "id": "PL5",
+      "name": "PL5",
+      "oldName": "GM",
+      "description": "Ticari kullanıma uygun plaka yüklemeli alet",
+      "image": "/products/plaka-yuklemeli/pl5.jpg",
+      "active": true
+    },
+    {
+      "id": "PLY",
+      "name": "PLY",
+      "oldName": "82",
+      "description": "Endüstriyel plaka yüklemeli alet",
+      "image": "/products/plaka-yuklemeli/ply.jpg",
+      "active": true
+    }
+  ]
+}

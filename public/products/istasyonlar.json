@@ -1,0 +1,24 @@
+{
+    "hero": {
+        "title": "İstasyonlar",
+        "subtitle": "Çoklu kullanım için tasarlanmış profesyonel istasyon sistemleri",
+        "image": "/products/istasyonlar/hero.jpg"
+    },
+    "series": [
+        {
+            "id": "l-serisi",
+            "name": "L Serisi",
+            "oldName": "LY",
+            "image": "/products/istasyonlar/l-serisi.jpg",
+            "active": true
+        },
+        {
+            "id": "yn-serisi",
+            "name": "YN Serisi",
+            "oldName": "YN",
+            "image": "/products/istasyonlar/yn-serisi.jpg",
+            "active": true
+        }
+    ],
+    "products": []
+}

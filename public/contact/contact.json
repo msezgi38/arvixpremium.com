@@ -1,0 +1,96 @@
+{
+    "hero": {
+        "title": "İletişim",
+        "subtitle": "Profesyonel ekibimizle tanışın ve projenizi tartışalım",
+        "image": "/contact/hero.jpg",
+        "overlayOpacity": 0.6
+    },
+    "info": {
+        "title": "İletişim Bilgileri",
+        "subtitle": "Doğrudan bizimle iletişime geçmek için aşağıdaki bilgileri kullanabilirsiniz.",
+        "email": "info@arvixpremium.com",
+        "phone": "+90 XXX XXX XX XX",
+        "whatsapp": "+90XXXXXXXXXX",
+        "address": "İstanbul, Türkiye",
+        "mapEmbed": "",
+        "workingHours": {
+            "weekdays": "Pazartesi - Cuma: 09:00 - 18:00",
+            "saturday": "Cumartesi: 10:00 - 16:00",
+            "sunday": "Pazar: Kapalı"
+        },
+        "social": {
+            "instagram": "",
+            "facebook": "",
+            "linkedin": "",
+            "youtube": ""
+        }
+    },
+    "form": {
+        "title": "Teklif Alın",
+        "subtitle": "Spor salonu projeniz için detaylı teklif almak veya ürünlerimiz hakkında bilgi almak için formu doldurun.",
+        "fields": [
+            {
+                "name": "name",
+                "label": "Ad Soyad",
+                "type": "text",
+                "required": true,
+                "placeholder": "Adınız Soyadınız",
+                "fullWidth": true
+            },
+            {
+                "name": "email",
+                "label": "E-posta",
+                "type": "email",
+                "required": true,
+                "placeholder": "ornek@email.com",
+                "fullWidth": false
+            },
+            {
+                "name": "phone",
+                "label": "Telefon",
+                "type": "tel",
+                "required": false,
+                "placeholder": "+90 5XX XXX XX XX",
+                "fullWidth": false
+            },
+            {
+                "name": "company",
+                "label": "Şirket / Salon Adı",
+                "type": "text",
+                "required": false,
+                "placeholder": "Şirket Adı",
+                "fullWidth": true
+            },
+            {
+                "name": "subject",
+                "label": "Konu",
+                "type": "select",
+                "required": true,
+                "placeholder": "Konu seçiniz",
+                "fullWidth": true,
+                "options": [
+                    "Teklif Talebi",
+                    "Ürün Bilgisi",
+                    "Marka & Logo",
+                    "Teknik Destek",
+                    "Diğer"
+                ]
+            },
+            {
+                "name": "message",
+                "label": "Mesajınız",
+                "type": "textarea",
+                "required": true,
+                "placeholder": "Projeniz hakkında detayları paylaşın...",
+                "fullWidth": true
+            }
+        ],
+        "submitText": "Gönder",
+        "successMessage": "Mesajınız gönderildi! En kısa sürede sizinle iletişime geçeceğiz."
+    },
+    "cta": {
+        "title": "Projenizi Değerlendirelim",
+        "subtitle": "Spor salonu ekipmanları konusunda uzman ekibimiz, projenizi başarıya ulaştırmak için yanınızda.",
+        "image": "/contact/cta.jpg"
+    }
+}

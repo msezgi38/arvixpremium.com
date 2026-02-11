@@ -1,0 +1,24 @@
+{
+    "hero": {
+        "title": "Sehpa & Bench",
+        "subtitle": "Profesyonel sehpa ve bench serileri",
+        "image": "/products/sehpa-bench/hero.jpg"
+    },
+    "series": [
+        {
+            "id": "z-serisi",
+            "name": "Z Serisi",
+            "oldName": "ZH",
+            "image": "/products/sehpa-bench/z-serisi.jpg",
+            "active": true
+        },
+        {
+            "id": "air-serisi",
+            "name": "Air Serisi",
+            "oldName": "Air Serisi",
+            "image": "/products/sehpa-bench/air-serisi.jpg",
+            "active": true
+        }
+    ],
+    "products": []
+}

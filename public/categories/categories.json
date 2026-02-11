@@ -1,0 +1,51 @@
+[
+    {
+        "id": 1,
+        "name": "Plaka Yüklemeli Aletler",
+        "image": "/categories/plaka-yuklemeli.jpg",
+        "slug": "plaka-yuklemeli",
+        "active": true
+    },
+    {
+        "id": 2,
+        "name": "Pinli (Selectorized) Aletler",
+        "image": "/categories/pinli-aletler.jpg",
+        "slug": "pinli-aletler",
+        "active": true
+    },
+    {
+        "id": 3,
+        "name": "Kardiyo Aletleri",
+        "image": "/categories/kardiyo.jpg",
+        "slug": "kardiyo",
+        "active": true
+    },
+    {
+        "id": 4,
+        "name": "İstasyonlar",
+        "image": "/categories/istasyonlar.jpg",
+        "slug": "istasyonlar",
+        "active": true
+    },
+    {
+        "id": 5,
+        "name": "Sehpa & Bench",
+        "image": "/categories/sehpa-bench.jpg",
+        "slug": "sehpa-bench",
+        "active": true
+    },
+    {
+        "id": 6,
+        "name": "Aksesuarlar",
+        "image": "/categories/aksesuarlar.jpg",
+        "slug": "aksesuarlar",
+        "active": true
+    },
+    {
+        "id": 7,
+        "name": "Yeni Ürünler",
+        "image": "/categories/yeni-urunler.jpg",
+        "slug": "yeni-urunler",
+        "active": true
+    }
+]

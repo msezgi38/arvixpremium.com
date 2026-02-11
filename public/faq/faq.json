@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "question": "Fiyatlarımız neden piyasaya göre daha avantajlı?",
+        "answer": "İş modelimizde distribütör, bayi ve aracı firma zincirlerini ortadan kaldırarak doğrudan üretici fabrikalar ile müşteriler arasında köprü görevi görüyoruz. Bu yapı sayesinde gereksiz marka primleri ve ek maliyetler fiyatlara yansıtılmaz. Ürünleri doğrudan fabrika çıkış fiyatları üzerinden tedarik ettiğimiz için; aynı kalite, teknik özellik ve dayanıklılık standartlarına sahip fitness ekipmanlarını piyasaya kıyasla %20–40 oranında daha avantajlı fiyatlarla sunabilmekteyiz.",
+        "active": true
+    },
+    {
+        "id": 2,
+        "question": "Ekipmanlar üzerinde logo özelleştirmesi yapabiliyor musunuz?",
+        "answer": "Evet. Tüm uygun ürünlerde müşteriye özel logo uygulaması yapabiliyoruz. Logo; lazer kesim, metal plaka, baskı veya özel etiketleme yöntemleriyle ekipmanlara entegre edilir.",
+        "active": true
+    },
+    {
+        "id": 3,
+        "question": "Uygun fiyat kalite düşüşü anlamına mı geliyor?",
+        "answer": "Hayır. Fiyat avantajı kalite düşüşünden değil; aracı maliyetlerinin elimine edilmesinden kaynaklanır. Ürünler aynı üretim bantlarında, aynı malzeme ve kalite standartlarıyla üretilmektedir.",
+        "active": true
+    },
+    {
+        "id": 4,
+        "question": "Renk özelleştirme seçenekleriniz nelerdir?",
+        "answer": "Makine gövdesi, kaplama, döşeme ve plastik aksamlar dahil olmak üzere kurumsal renklerinize uygun üretim yapılabilmektedir. Renk seçenekleri üreticiye ve ürün tipine göre belirlenir.",
+        "active": true
+    },
+    {
+        "id": 5,
+        "question": "Teklif ve fiyatlandırma nasıl yapılıyor?",
+        "answer": "Fiyatlandırma; ürün modeli, adet, logo ve renk özelleştirme talepleri ile sevkiyat koşullarına göre belirlenir. Detaylı teklif için bizimle iletişime geçmeniz yeterlidir.",
+        "active": true
+    },
+    {
+        "id": 6,
+        "question": "Spor salonu projeleri için toplu çözümler sunuyor musunuz?",
+        "answer": "Evet. Yeni açılacak veya yenilenecek spor salonları için konsept, renk, marka ve ekipman uyumunu kapsayan toplu proje çözümleri sunuyoruz.",
+        "active": true
+    },
+    {
+        "id": 7,
+        "question": "Teslimat süresi ne kadar?",
+        "answer": "Teslimat süresi; üretim, özelleştirme ve sevkiyat sürecine bağlı olarak genellikle 30–75 gün arasında değişmektedir. Net süre, sipariş onayı sonrası bildirilir.",
+        "active": true
+    }
+]

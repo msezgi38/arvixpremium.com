@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "Arvix Premium.",
+    "subtitle": "Profesyonel spor salonları için yüksek kalitede fitness ekipmanları",
+    "image": "/slides/slide1.jpg",
+    "active": true
+  },
+  {
+    "id": 2,
+    "title": "Kendi Markanızla Üretin",
+    "subtitle": "Fabrika çıkış fiyatlarıyla profesyonel spor ekipmanları",
+    "image": "/slides/slide2.jpg",
+    "active": true
+  },
+  {
+    "id": 3,
+    "title": "Profesyonel Ekipmanlar",
+    "subtitle": "Ticari kullanım için dayanıklı ve kaliteli fitness ekipmanları",
+    "image": "/slides/slide3.jpg",
+    "active": true
+  }
+]

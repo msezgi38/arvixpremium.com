@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "name": "Ahmet Yılmaz",
+        "company": "FitZone Gym",
+        "comment": "Arvix ile çalışmaya başladıktan sonra ekipman kalitemiz çok arttı. Kendi markamızla üretim yapabilmek büyük avantaj.",
+        "avatar": "/testimonials/avatar1.jpg",
+        "rating": 5,
+        "active": true
+    },
+    {
+        "id": 2,
+        "name": "Mehmet Demir",
+        "company": "PowerHouse Fitness",
+        "comment": "Fabrika direkt fiyatlarla çalışarak maliyetlerimizi %30 düşürdük. Ekipmanların kalitesi mükemmel.",
+        "avatar": "/testimonials/avatar2.jpg",
+        "rating": 5,
+        "active": true
+    },
+    {
+        "id": 3,
+        "name": "Ayşe Kara",
+        "company": "Elite Sports Center",
+        "comment": "Profesyonel ekip, hızlı teslimat ve kusursuz müşteri desteği. Kesinlikle tavsiye ediyorum.",
+        "avatar": "/testimonials/avatar3.jpg",
+        "rating": 5,
+        "active": true
+    }
+]

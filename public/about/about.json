@@ -1,0 +1,105 @@
+{
+    "hero": {
+        "title": "ARVIX",
+        "subtitle": "Profesyonel Fitness Ekipmanlarında Güvenilir Çözüm Ortağınız",
+        "image": "/about/hero.jpg",
+        "overlayOpacity": 0.6
+    },
+    "intro": {
+        "title": "Biz Kimiz?",
+        "paragraphs": [
+            "Arvix ekibi olarak; **profesyonel spor salonları, butik stüdyolar ve kurumsal fitness yatırımları** için yüksek standartlarda fitness ekipmanlarını tedarik eden, markalayan ve uçtan uca yöneten bir çözüm ortağıyız.",
+            "Yurt dışındaki üretici fabrikalarla doğrudan iş birliği içinde çalışarak; **aracı marka ve distribütör zincirlerini ortadan kaldırır**, fitness ekipmanlarını kendi marka ve logonuzla pazara sunmanıza imkân tanırız. Bu sayede yatırımcılar için hem maliyet avantajı hem de güçlü bir marka kimliği oluştururuz."
+        ],
+        "image": "/about/intro.jpg",
+        "buttonText": "",
+        "buttonLink": ""
+    },
+    "sections": [
+        {
+            "id": 1,
+            "title": "Ürün Kalite Standartları",
+            "content": "Tüm ürün gamımız aşağıdaki kriterlere göre titizlikle seçilir:",
+            "list": [
+                "Ticari kullanım yoğunluğu",
+                "Mekanik dayanıklılık",
+                "Motor performansı",
+                "Ergonomi",
+                "Uzun ömürlü kullanım"
+            ],
+            "image": "/about/quality.jpg",
+            "imagePosition": "right",
+            "order": 1
+        },
+        {
+            "id": 2,
+            "title": "Üretim Süreci Kontrolü",
+            "content": "Üretim süreçleri boyunca **teknik spesifikasyonlar, malzeme kalınlıkları, motor güçleri ve güvenlik standartları** Arvix ekibi tarafından kontrol edilir; profesyonel kullanım gereksinimlerine tam uyum sağlanır.",
+            "list": [],
+            "image": "/about/production.jpg",
+            "imagePosition": "left",
+            "order": 2
+        },
+        {
+            "id": 3,
+            "title": "Çözümlerimiz",
+            "content": "Spor salonlarının ihtiyaç duyduğu temel gereksinimleri tek çatı altında çözümleriz. **Tedarikten markalamaya, ithalat ve lojistikten satış sonrası desteğe kadar** tüm süreci uçtan uca yönetir; spor salonu yatırımcılarına sürdürülebilir, ölçeklenebilir ve uzun vadeli çözümler sunarız.",
+            "list": [
+                "Yüksek kullanım saatlerine dayanıklılık",
+                "Marka bütünlüğü ve estetik tasarım",
+                "Uçtan uca proje yönetimi",
+                "Satış sonrası destek"
+            ],
+            "image": "/about/solutions.jpg",
+            "imagePosition": "right",
+            "order": 3
+        }
+    ],
+    "mission": {
+        "title": "Amacımız",
+        "content": "Amacımız yalnızca ekipman satışı değil; Arvix olarak **salonların operasyonel verimliliğini, marka değerini ve yatırım geri dönüşünü artıran güvenilir bir iş ortaklığı** kurmaktır.",
+        "image": "/about/mission.jpg"
+    },
+    "values": [
+        {
+            "id": 1,
+            "title": "Müşteri Odaklılık",
+            "description": "Spor salonu yatırımcılarının ihtiyaçlarını anlar ve onlara özel çözümler sunarız.",
+            "icon": "target"
+        },
+        {
+            "id": 2,
+            "title": "Kalite Garantisi",
+            "description": "Tüm ürünlerimiz profesyonel kullanım standartlarında ve uzun ömürlüdür.",
+            "icon": "award"
+        },
+        {
+            "id": 3,
+            "title": "Şeffaflık",
+            "description": "Direkt fabrika çalışma modelimizle şeffaf fiyatlandırma ve süreç yönetimi sağlarız.",
+            "icon": "check"
+        }
+    ],
+    "stats": [
+        {
+            "id": 1,
+            "value": "500+",
+            "label": "Tamamlanan Proje"
+        },
+        {
+            "id": 2,
+            "value": "50+",
+            "label": "Ürün Çeşidi"
+        },
+        {
+            "id": 3,
+            "value": "%100",
+            "label": "Müşteri Memnuniyeti"
+        },
+        {
+            "id": 4,
+            "value": "7/24",
+            "label": "Destek"
+        }
+    ]
+}

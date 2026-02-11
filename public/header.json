@@ -1,0 +1,31 @@
+{
+  "navLinks": [
+    {
+      "name": "Biz Kimiz",
+      "href": "/hakkimizda",
+      "active": true
+    },
+    {
+      "name": "Marka & Logo",
+      "href": "/marka-logo",
+      "active": false
+    },
+    {
+      "name": "Blog",
+      "href": "/blog",
+      "active": true
+    },
+    {
+      "name": "SSS",
+      "href": "/sss",
+      "active": true
+    },
+    {
+      "name": "İletişim",
+      "href": "/iletisim",
+      "active": true
+    }
+  ],
+  "ctaText": "Teklif Al",
+  "ctaLink": "/iletisim"
+}
