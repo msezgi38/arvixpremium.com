@@ -23,7 +23,7 @@ const mockProduct = {
         'Kolay bakım',
         'Logo ve renk özelleştirme uygun',
     ],
-    images: [],
+    images: [] as { url: string; alt?: string }[],
     category: { name: 'Plaka Yüklemeli', slug: 'plaka-yuklemeli' },
 };
 
