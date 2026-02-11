@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        const dir = path.join(process.cwd(), 'public', folder);
+        // Write to uploads/ directory (not public/) so files persist after rebuild
+        const dir = path.join(process.cwd(), 'uploads', folder);
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
         const ext = path.extname(file.name) || '.jpg';
@@ -25,8 +26,9 @@ export async function POST(request: NextRequest) {
 
         fs.writeFileSync(filePath, buffer);
 
+        // Return URL via the dynamic file serving API route
         return NextResponse.json({
-            url: `/${folder}/${filename}`,
+            url: `/api/files/${folder}/${filename}`,
             filename,
         });
     } catch {
