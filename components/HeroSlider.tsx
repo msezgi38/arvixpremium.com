@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface Slide {
     id: number;
@@ -13,6 +13,13 @@ interface Slide {
 export default function HeroSlider() {
     const [slides, setSlides] = useState<Slide[]>([]);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+
+    // Mouse/touch drag state
+    const isDragging = useRef(false);
+    const startX = useRef(0);
+    const currentX = useRef(0);
+    const sliderRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         fetch('/api/slides', { cache: 'no-store' })
@@ -22,7 +29,6 @@ export default function HeroSlider() {
                 setSlides(activeSlides);
             })
             .catch(() => {
-                // Fallback slides if JSON fails
                 setSlides([
                     {
                         id: 1,
@@ -47,12 +53,73 @@ export default function HeroSlider() {
         }
     }, [slides.length]);
 
-    // Auto-play
+    // Auto-play (pause on drag)
     useEffect(() => {
-        if (slides.length <= 1) return;
+        if (slides.length <= 1 || isPaused) return;
         const interval = setInterval(nextSlide, 5000);
         return () => clearInterval(interval);
-    }, [nextSlide, slides.length]);
+    }, [nextSlide, slides.length, isPaused]);
+
+    // Mouse drag handlers
+    const handleDragStart = useCallback((clientX: number) => {
+        isDragging.current = true;
+        startX.current = clientX;
+        currentX.current = clientX;
+        setIsPaused(true);
+    }, []);
+
+    const handleDragMove = useCallback((clientX: number) => {
+        if (!isDragging.current) return;
+        currentX.current = clientX;
+    }, []);
+
+    const handleDragEnd = useCallback(() => {
+        if (!isDragging.current) return;
+        isDragging.current = false;
+
+        const diff = startX.current - currentX.current;
+        const threshold = 50; // minimum px to trigger slide change
+
+        if (diff > threshold) {
+            nextSlide();
+        } else if (diff < -threshold) {
+            prevSlide();
+        }
+
+        // Resume auto-play after 2s
+        setTimeout(() => setIsPaused(false), 2000);
+    }, [nextSlide, prevSlide]);
+
+    // Mouse events
+    const onMouseDown = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        handleDragStart(e.clientX);
+    }, [handleDragStart]);
+
+    const onMouseMove = useCallback((e: React.MouseEvent) => {
+        handleDragMove(e.clientX);
+    }, [handleDragMove]);
+
+    const onMouseUp = useCallback(() => {
+        handleDragEnd();
+    }, [handleDragEnd]);
+
+    const onMouseLeave = useCallback(() => {
+        if (isDragging.current) handleDragEnd();
+    }, [handleDragEnd]);
+
+    // Touch events
+    const onTouchStart = useCallback((e: React.TouchEvent) => {
+        handleDragStart(e.touches[0].clientX);
+    }, [handleDragStart]);
+
+    const onTouchMove = useCallback((e: React.TouchEvent) => {
+        handleDragMove(e.touches[0].clientX);
+    }, [handleDragMove]);
+
+    const onTouchEnd = useCallback(() => {
+        handleDragEnd();
+    }, [handleDragEnd]);
 
     if (slides.length === 0) {
         return (
@@ -65,7 +132,18 @@ export default function HeroSlider() {
     }
 
     return (
-        <section className="relative min-h-[600px] overflow-hidden">
+        <section
+            ref={sliderRef}
+            className="relative min-h-[600px] overflow-hidden select-none"
+            style={{ cursor: slides.length > 1 ? (isDragging.current ? 'grabbing' : 'grab') : 'default' }}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseLeave}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+        >
             {/* Slides */}
             {slides.map((slide, index) => (
                 <div
@@ -80,7 +158,8 @@ export default function HeroSlider() {
                             <img
                                 src={slide.image}
                                 alt={slide.title}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                                draggable={false}
                             />
                             <div className="absolute inset-0 bg-black/50" />
                         </>
@@ -108,7 +187,7 @@ export default function HeroSlider() {
             {slides.length > 1 && (
                 <>
                     <button
-                        onClick={prevSlide}
+                        onClick={(e) => { e.stopPropagation(); prevSlide(); }}
                         className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white transition-colors"
                         aria-label="Önceki"
                     >
@@ -117,7 +196,7 @@ export default function HeroSlider() {
                         </svg>
                     </button>
                     <button
-                        onClick={nextSlide}
+                        onClick={(e) => { e.stopPropagation(); nextSlide(); }}
                         className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white transition-colors"
                         aria-label="Sonraki"
                     >
@@ -134,7 +213,7 @@ export default function HeroSlider() {
                     {slides.map((_, index) => (
                         <button
                             key={index}
-                            onClick={() => setCurrentSlide(index)}
+                            onClick={(e) => { e.stopPropagation(); setCurrentSlide(index); }}
                             className={`w-3 h-3 rounded-full transition-colors ${index === currentSlide ? 'bg-white' : 'bg-white/40'
                                 }`}
                             aria-label={`Slide ${index + 1}`}
