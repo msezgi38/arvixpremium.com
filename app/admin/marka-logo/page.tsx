@@ -79,53 +79,80 @@ export default function MarkaLogoAdmin() {
     if (!data) return <div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin" /></div>;
 
     const update = (path: string, value: unknown) => {
-        const keys = path.split('.');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const newData: any = JSON.parse(JSON.stringify(data));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let obj: any = newData;
-        for (let i = 0; i < keys.length - 1; i++) {
-            if (obj[keys[i]] === undefined) obj[keys[i]] = {};
-            obj = obj[keys[i]];
-        }
-        obj[keys[keys.length - 1]] = value;
-        setData(newData);
+        setData(prev => {
+            if (!prev) return prev;
+            const keys = path.split('.');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const newData: any = JSON.parse(JSON.stringify(prev));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            let obj: any = newData;
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (obj[keys[i]] === undefined) obj[keys[i]] = {};
+                obj = obj[keys[i]];
+            }
+            obj[keys[keys.length - 1]] = value;
+            return newData;
+        });
     };
 
     // Section helpers
     const addSection = () => {
-        const newId = Math.max(0, ...(data.sections || []).map(s => s.id)) + 1;
-        update('sections', [...(data.sections || []), { id: newId, title: '', description: '', image: '', images: [] }]);
+        setData(prev => {
+            if (!prev) return prev;
+            const newId = Math.max(0, ...(prev.sections || []).map(s => s.id)) + 1;
+            return { ...prev, sections: [...(prev.sections || []), { id: newId, title: '', description: '', image: '', images: [] }] };
+        });
     };
     const removeSection = (id: number) => {
-        update('sections', (data.sections || []).filter(s => s.id !== id));
+        setData(prev => {
+            if (!prev) return prev;
+            return { ...prev, sections: (prev.sections || []).filter(s => s.id !== id) };
+        });
     };
     const updateSection = (id: number, field: string, value: unknown) => {
-        update('sections', (data.sections || []).map(s => s.id === id ? { ...s, [field]: value } : s));
+        setData(prev => {
+            if (!prev) return prev;
+            return { ...prev, sections: (prev.sections || []).map(s => s.id === id ? { ...s, [field]: value } : s) };
+        });
     };
     const addSectionImage = (id: number) => {
-        const section = data.sections.find(s => s.id === id);
-        if (section) updateSection(id, 'images', [...(section.images || []), '']);
+        setData(prev => {
+            if (!prev) return prev;
+            return { ...prev, sections: (prev.sections || []).map(s => s.id === id ? { ...s, images: [...(s.images || []), ''] } : s) };
+        });
     };
     const removeSectionImage = (sectionId: number, imgIdx: number) => {
-        const section = data.sections.find(s => s.id === sectionId);
-        if (section) updateSection(sectionId, 'images', (section.images || []).filter((_, i) => i !== imgIdx));
+        setData(prev => {
+            if (!prev) return prev;
+            return { ...prev, sections: (prev.sections || []).map(s => s.id === sectionId ? { ...s, images: (s.images || []).filter((_, i) => i !== imgIdx) } : s) };
+        });
     };
     const updateSectionImage = (sectionId: number, imgIdx: number, url: string) => {
-        const section = data.sections.find(s => s.id === sectionId);
-        if (section) updateSection(sectionId, 'images', (section.images || []).map((img, i) => i === imgIdx ? url : img));
+        setData(prev => {
+            if (!prev) return prev;
+            return { ...prev, sections: (prev.sections || []).map(s => s.id === sectionId ? { ...s, images: (s.images || []).map((img, i) => i === imgIdx ? url : img) } : s) };
+        });
     };
 
     // Gallery helpers
     const addGalleryItem = () => {
-        const newId = Math.max(0, ...(data.gallery || []).map(g => g.id)) + 1;
-        update('gallery', [...(data.gallery || []), { id: newId, image: '', title: '' }]);
+        setData(prev => {
+            if (!prev) return prev;
+            const newId = Math.max(0, ...(prev.gallery || []).map(g => g.id)) + 1;
+            return { ...prev, gallery: [...(prev.gallery || []), { id: newId, image: '', title: '' }] };
+        });
     };
     const removeGalleryItem = (id: number) => {
-        update('gallery', (data.gallery || []).filter(g => g.id !== id));
+        setData(prev => {
+            if (!prev) return prev;
+            return { ...prev, gallery: (prev.gallery || []).filter(g => g.id !== id) };
+        });
     };
     const updateGalleryItem = (id: number, field: string, value: string) => {
-        update('gallery', (data.gallery || []).map(g => g.id === id ? { ...g, [field]: value } : g));
+        setData(prev => {
+            if (!prev) return prev;
+            return { ...prev, gallery: (prev.gallery || []).map(g => g.id === id ? { ...g, [field]: value } : g) };
+        });
     };
 
     const sectionIcons = ['🎨', '🛋️', '🏷️', '⭐', '🔧', '💎'];
