@@ -3,25 +3,38 @@
 import { useState, useEffect } from 'react';
 import ImageUpload from '@/components/admin/ImageUpload';
 
-interface Feature {
+interface CustomSection {
     id: number;
     title: string;
     description: string;
     image: string;
+    images: string[];
+}
+
+interface GalleryItem {
+    id: number;
+    image: string;
+    title: string;
 }
 
 interface BrandData {
     hero: { title: string; subtitle: string; image: string; overlayOpacity: number };
-    content: { title: string; paragraphs: string[]; image: string };
-    features: Feature[];
+    intro: { title: string; paragraphs: string[] };
+    sections: CustomSection[];
+    gallery: GalleryItem[];
     cta: { title: string; subtitle: string; buttonText: string; buttonLink: string };
 }
 
 const defaultData: BrandData = {
-    hero: { title: '', subtitle: '', image: '', overlayOpacity: 0.6 },
-    content: { title: '', paragraphs: [''], image: '' },
-    features: [],
-    cta: { title: '', subtitle: '', buttonText: '', buttonLink: '' },
+    hero: { title: 'Kendi Marka ve Logonu Oluştur', subtitle: 'Seçtiğin spor aletlerini markana özel olarak yeniden tasarla', image: '', overlayOpacity: 0.6 },
+    intro: { title: 'Markana Özel Ekipman Tasarımı', paragraphs: ['ARVIX, seçtiğin spor aletlerini markana özel olarak yeniden tasarlamanı sağlar. Her detay; estetik, kalite ve prestij anlayışın doğrultusunda şekillenir.'] },
+    sections: [
+        { id: 1, title: 'Metal Gövde Rengini Siz Belirleyin', description: 'Ekipmanlarımızın metal gövdesi, salonunuzun karakterini yansıtacak şekilde size özel olarak renklendirilir.\nMat, parlak veya özel kaplama seçenekleriyle; güçlü, rafine ve prestijli bir görünüm sunan metal renkleri arasından özgürce seçim yapabilirsiniz.', image: '', images: [] },
+        { id: 2, title: 'Koltuk Renginizi Seçmenize İmkan Sağlıyoruz', description: 'Oturma ve temas yüzeylerinde kullanılan döşeme renkleri, mekân estetiğinizle kusursuz bir uyum sağlayacak biçimde belirlenir.\nZarafet, konfor ve kaliteyi bir araya getiren özel renk alternatifleriyle ekipmanlarınıza sofistike bir kimlik kazandırabilirsiniz.', image: '', images: [] },
+        { id: 3, title: 'Logo ve Markanız Artık Spor Ekipmanınızda', description: 'Ekipmanlarınız, marka kimliğinizi yansıtacak şekilde logonuz ve isimlendirme tercihinizle özel olarak hazırlanır.\nPVC, metal, üç boyutlu kabartma veya yüksek kaliteli sticker uygulamalarıyla; logonuz ekipmanların tasarımına entegre edilerek prestijli ve kurumsal bir görünüm elde edilir.', image: '', images: [] },
+    ],
+    gallery: [],
+    cta: { title: 'Markanızı Ekipmanlarınıza Taşıyın', subtitle: 'Profesyonel ekibimizle iletişime geçin', buttonText: 'Teklif Al', buttonLink: '/iletisim' },
 };
 
 const inputClass = 'w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded';
@@ -37,23 +50,20 @@ export default function MarkaLogoAdmin() {
             .then(r => r.json())
             .then(d => {
                 if (d && Object.keys(d).length > 0) {
-                    setData({ ...defaultData, ...d });
+                    // Migrate old format
+                    const migrated: BrandData = {
+                        hero: d.hero || defaultData.hero,
+                        intro: d.intro || (d.content ? { title: d.content.title, paragraphs: d.content.paragraphs } : defaultData.intro),
+                        sections: d.sections || (d.features ? d.features.map((f: { id: number; title: string; description: string; image: string }) => ({ ...f, images: f.image ? [f.image] : [] })) : defaultData.sections),
+                        gallery: d.gallery || defaultData.gallery,
+                        cta: d.cta || defaultData.cta,
+                    };
+                    setData(migrated);
                 } else {
-                    fetch('/brand/brand.json', { cache: 'no-store' })
-                        .then(r => r.json())
-                        .then(old => {
-                            const merged = { ...defaultData, ...old };
-                            setData(merged);
-                            fetch('/api/db/settings', {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ key: 'brand', value: merged }),
-                            });
-                        })
-                        .catch(() => setData(defaultData));
+                    setData(defaultData);
                 }
             })
-            .catch(() => setData(null));
+            .catch(() => setData(defaultData));
     }, []);
 
     const save = async () => {
@@ -82,17 +92,43 @@ export default function MarkaLogoAdmin() {
         setData(newData);
     };
 
-    // Feature helpers
-    const addFeature = () => {
-        const newId = Math.max(0, ...(data.features || []).map(f => f.id)) + 1;
-        update('features', [...(data.features || []), { id: newId, title: '', description: '', image: '' }]);
+    // Section helpers
+    const addSection = () => {
+        const newId = Math.max(0, ...(data.sections || []).map(s => s.id)) + 1;
+        update('sections', [...(data.sections || []), { id: newId, title: '', description: '', image: '', images: [] }]);
     };
-    const removeFeature = (id: number) => {
-        update('features', (data.features || []).filter(f => f.id !== id));
+    const removeSection = (id: number) => {
+        update('sections', (data.sections || []).filter(s => s.id !== id));
     };
-    const updateFeature = (id: number, field: string, value: string) => {
-        update('features', (data.features || []).map(f => f.id === id ? { ...f, [field]: value } : f));
+    const updateSection = (id: number, field: string, value: unknown) => {
+        update('sections', (data.sections || []).map(s => s.id === id ? { ...s, [field]: value } : s));
     };
+    const addSectionImage = (id: number) => {
+        const section = data.sections.find(s => s.id === id);
+        if (section) updateSection(id, 'images', [...(section.images || []), '']);
+    };
+    const removeSectionImage = (sectionId: number, imgIdx: number) => {
+        const section = data.sections.find(s => s.id === sectionId);
+        if (section) updateSection(sectionId, 'images', (section.images || []).filter((_, i) => i !== imgIdx));
+    };
+    const updateSectionImage = (sectionId: number, imgIdx: number, url: string) => {
+        const section = data.sections.find(s => s.id === sectionId);
+        if (section) updateSection(sectionId, 'images', (section.images || []).map((img, i) => i === imgIdx ? url : img));
+    };
+
+    // Gallery helpers
+    const addGalleryItem = () => {
+        const newId = Math.max(0, ...(data.gallery || []).map(g => g.id)) + 1;
+        update('gallery', [...(data.gallery || []), { id: newId, image: '', title: '' }]);
+    };
+    const removeGalleryItem = (id: number) => {
+        update('gallery', (data.gallery || []).filter(g => g.id !== id));
+    };
+    const updateGalleryItem = (id: number, field: string, value: string) => {
+        update('gallery', (data.gallery || []).map(g => g.id === id ? { ...g, [field]: value } : g));
+    };
+
+    const sectionIcons = ['🎨', '🛋️', '🏷️', '⭐', '🔧', '💎'];
 
     return (
         <div>
@@ -118,34 +154,76 @@ export default function MarkaLogoAdmin() {
                     <div><label className={labelClass}>Overlay Opaklığı (0-1)</label><input type="number" step="0.1" min="0" max="1" value={data.hero?.overlayOpacity ?? 0.6} onChange={e => update('hero.overlayOpacity', parseFloat(e.target.value))} className="w-32 border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black rounded" /></div>
                 </div>
 
-                {/* ═══════════ İÇERİK ═══════════ */}
+                {/* ═══════════ GİRİŞ ═══════════ */}
                 <div className={cardClass}>
-                    <h2 className="font-bold text-lg border-b pb-2">📝 İçerik Bölümü</h2>
-                    <div><label className={labelClass}>Başlık</label><input value={data.content?.title || ''} onChange={e => update('content.title', e.target.value)} className={inputClass} /></div>
-                    <div><label className={labelClass}>Paragraflar (her satır ayrı paragraf)</label><textarea value={(data.content?.paragraphs || []).join('\n')} onChange={e => update('content.paragraphs', e.target.value.split('\n'))} rows={5} className={inputClass} /></div>
-                    <ImageUpload value={data.content?.image || ''} onChange={url => update('content.image', url)} folder="brand" label="İçerik Görseli" />
+                    <h2 className="font-bold text-lg border-b pb-2">📝 Giriş Bölümü</h2>
+                    <div><label className={labelClass}>Başlık</label><input value={data.intro?.title || ''} onChange={e => update('intro.title', e.target.value)} className={inputClass} /></div>
+                    <div><label className={labelClass}>Paragraflar (her satır ayrı paragraf)</label><textarea value={(data.intro?.paragraphs || []).join('\n')} onChange={e => update('intro.paragraphs', e.target.value.split('\n'))} rows={4} className={inputClass} /></div>
                 </div>
 
-                {/* ═══════════ ÖZELLİKLER ═══════════ */}
+                {/* ═══════════ ÖZELLEŞTİRME BÖLÜMLERİ ═══════════ */}
                 <div className={cardClass}>
                     <div className="flex items-center justify-between border-b pb-2">
-                        <h2 className="font-bold text-lg">⭐ Özellikler</h2>
-                        <button onClick={addFeature} className="text-xs bg-neutral-100 hover:bg-neutral-200 px-3 py-1.5 rounded font-semibold">+ Ekle</button>
+                        <h2 className="font-bold text-lg">🔧 Özelleştirme Bölümleri</h2>
+                        <button onClick={addSection} className="text-xs bg-neutral-100 hover:bg-neutral-200 px-3 py-1.5 rounded font-semibold">+ Bölüm Ekle</button>
                     </div>
-                    {(data.features || []).map((f) => (
-                        <div key={f.id} className="border border-neutral-200 rounded-lg p-4 space-y-3 bg-neutral-50">
+                    <p className="text-xs text-neutral-400">Her bölüm sayfada solda metin / sağda görsel olarak gösterilir. Sıralama değişimli olur (zigzag).</p>
+
+                    {(data.sections || []).map((section, sIdx) => (
+                        <div key={section.id} className="border border-neutral-200 rounded-lg p-5 space-y-4 bg-neutral-50">
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-bold text-neutral-600">Özellik #{f.id}</span>
-                                <button onClick={() => removeFeature(f.id)} className="text-red-500 hover:text-red-700 text-xs font-semibold">Sil</button>
+                                <span className="text-sm font-bold text-neutral-700">{sectionIcons[sIdx] || '📌'} Bölüm #{sIdx + 1}</span>
+                                <button onClick={() => removeSection(section.id)} className="text-red-500 hover:text-red-700 text-xs font-semibold">Sil</button>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div><label className={labelClass}>Başlık</label><input value={f.title} onChange={e => updateFeature(f.id, 'title', e.target.value)} className={inputClass} /></div>
-                                <div><label className={labelClass}>Açıklama</label><input value={f.description} onChange={e => updateFeature(f.id, 'description', e.target.value)} className={inputClass} /></div>
+
+                            <div><label className={labelClass}>Başlık</label><input value={section.title} onChange={e => updateSection(section.id, 'title', e.target.value)} className={inputClass} /></div>
+                            <div><label className={labelClass}>Açıklama</label><textarea value={section.description} onChange={e => updateSection(section.id, 'description', e.target.value)} rows={4} className={inputClass} /></div>
+
+                            {/* Main image */}
+                            <ImageUpload value={section.image} onChange={url => updateSection(section.id, 'image', url)} folder="brand" label="Ana Görsel" />
+
+                            {/* Additional images */}
+                            <div className="border-t pt-4 mt-2">
+                                <div className="flex items-center justify-between mb-3">
+                                    <label className={labelClass}>Ek Görseller (Galeri)</label>
+                                    <button onClick={() => addSectionImage(section.id)} className="text-xs bg-neutral-200 hover:bg-neutral-300 px-3 py-1 rounded font-semibold">+ Görsel Ekle</button>
+                                </div>
+                                {(section.images || []).length === 0 && <p className="text-xs text-neutral-400">Ek görsel yok. Birden fazla görsel eklerseniz grid galeri olarak gösterilir.</p>}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {(section.images || []).map((img, imgIdx) => (
+                                        <div key={imgIdx} className="relative">
+                                            <ImageUpload value={img} onChange={url => updateSectionImage(section.id, imgIdx, url)} folder="brand" label={`Görsel ${imgIdx + 1}`} />
+                                            <button onClick={() => removeSectionImage(section.id, imgIdx)} className="absolute top-0 right-0 text-red-400 hover:text-red-600 text-xs p-1">✕</button>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <ImageUpload value={f.image} onChange={url => updateFeature(f.id, 'image', url)} folder="brand" label="Özellik Görseli" />
                         </div>
                     ))}
-                    {(data.features || []).length === 0 && <p className="text-sm text-neutral-400">Henüz özellik eklenmedi.</p>}
+                    {(data.sections || []).length === 0 && <p className="text-sm text-neutral-400">Henüz bölüm eklenmedi.</p>}
+                </div>
+
+                {/* ═══════════ ÜRÜN GALERİSİ ═══════════ */}
+                <div className={cardClass}>
+                    <div className="flex items-center justify-between border-b pb-2">
+                        <h2 className="font-bold text-lg">📸 Ürün Galerisi</h2>
+                        <button onClick={addGalleryItem} className="text-xs bg-neutral-100 hover:bg-neutral-200 px-3 py-1.5 rounded font-semibold">+ Ürün Ekle</button>
+                    </div>
+                    <p className="text-xs text-neutral-400">Sayfada koyu arka planda ürün resimleri grid olarak gösterilir.</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {(data.gallery || []).map((item) => (
+                            <div key={item.id} className="border border-neutral-200 rounded-lg p-3 space-y-2 bg-white">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-neutral-500">#{item.id}</span>
+                                    <button onClick={() => removeGalleryItem(item.id)} className="text-red-400 hover:text-red-600 text-xs">✕ Sil</button>
+                                </div>
+                                <ImageUpload value={item.image} onChange={url => updateGalleryItem(item.id, 'image', url)} folder="brand" label="Ürün Görseli" />
+                                <input value={item.title} onChange={e => updateGalleryItem(item.id, 'title', e.target.value)} className={inputClass} placeholder="Ürün adı (opsiyonel)" />
+                            </div>
+                        ))}
+                    </div>
+                    {(data.gallery || []).length === 0 && <p className="text-sm text-neutral-400">Henüz ürün görseli eklenmedi.</p>}
                 </div>
 
                 {/* ═══════════ CTA ═══════════ */}
