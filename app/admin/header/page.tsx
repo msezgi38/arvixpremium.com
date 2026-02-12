@@ -55,6 +55,7 @@ export default function HeaderAdmin() {
                             </label>
                         </div>
                     ))}
+                    <button onClick={() => setData({ ...data, navLinks: [...(data.navLinks || []), { name: '', href: '/', active: true }] })} className="text-xs bg-neutral-100 hover:bg-neutral-200 px-4 py-2 rounded font-semibold mt-2">+ Yeni Link Ekle</button>
                 </div>
 
                 <div className="bg-white border border-neutral-200 p-6 space-y-4 rounded-lg">
