@@ -28,6 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const pathname = usePathname();
     const router = useRouter();
     const [authed, setAuthed] = useState<boolean | null>(null);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
         if (pathname === '/admin/login') {
@@ -38,6 +39,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             .then(r => { if (r.ok) setAuthed(true); else { setAuthed(false); router.push('/admin/login'); } })
             .catch(() => { setAuthed(false); router.push('/admin/login'); });
     }, [pathname, router]);
+
+    // Close sidebar on route change (mobile)
+    useEffect(() => {
+        setSidebarOpen(false);
+    }, [pathname]);
 
     const logout = async () => {
         await fetch('/api/auth', { method: 'DELETE' });
@@ -63,15 +69,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className="min-h-screen bg-neutral-100 flex">
+            {/* Mobile Top Bar */}
+            <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black text-white flex items-center justify-between px-4 py-3">
+                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white p-1">
+                    {sidebarOpen ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                    ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
+                    )}
+                </button>
+                <Link href="/admin" className="block">
+                    <h1 className="text-sm font-bold tracking-[3px]">ARVIX <span className="text-neutral-500 text-[10px]">ADMIN</span></h1>
+                </Link>
+                <div className="w-8" />
+            </div>
+
+            {/* Overlay - Mobile */}
+            {sidebarOpen && (
+                <div className="lg:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setSidebarOpen(false)} />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-64 bg-black text-white flex-shrink-0 fixed h-full overflow-y-auto z-40">
-                <div className="p-6 border-b border-neutral-800">
+            <aside className={`w-64 bg-black text-white flex-shrink-0 fixed h-full overflow-y-auto z-40 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+                <div className="p-6 border-b border-neutral-800 hidden lg:block">
                     <Link href="/admin" className="block">
                         <h1 className="text-lg font-bold tracking-[3px]">ARVIX</h1>
                         <p className="text-[10px] text-neutral-500 uppercase tracking-[2px] mt-1">Admin Panel</p>
                     </Link>
                 </div>
-                <nav className="p-4 space-y-1">
+                <div className="lg:hidden h-[52px]" />
+                <nav className="p-4 space-y-1 pb-32">
                     {menuItems.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
                         return (
@@ -89,7 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         );
                     })}
                 </nav>
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-800 space-y-3">
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-800 space-y-3 bg-black">
                     <Link href="/" className="flex items-center gap-2 text-xs text-neutral-500 hover:text-white transition-colors uppercase tracking-wider">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" x2="21" y1="14" y2="3" /></svg>
                         Siteyi Görüntüle
@@ -102,7 +129,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 p-8 min-w-0 overflow-x-hidden">
+            <main className="flex-1 lg:ml-64 p-4 md:p-8 min-w-0 overflow-x-hidden pt-16 lg:pt-8">
                 <div className="max-w-5xl">
                     {children}
                 </div>
