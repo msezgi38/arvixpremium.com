@@ -28,7 +28,8 @@ export default function BlogAdmin() {
     const load = () => fetch('/api/db/blog', { cache: 'no-store' }).then(r => r.json()).then(d => setItems(Array.isArray(d) ? d : [])).catch(() => setItems([]));
     useEffect(() => { load(); }, []);
 
-    const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9ğüşıöçİĞÜŞÖÇ]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    const turkishMap: Record<string, string> = { 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ı': 'i', 'ö': 'o', 'ç': 'c', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'İ': 'i', 'Ö': 'o', 'Ç': 'c' };
+    const generateSlug = (title: string) => title.toLowerCase().replace(/[ğüşıöçĞÜŞİÖÇ]/g, c => turkishMap[c] || c).replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 
     const save = async () => {
         if (!editing) return;
@@ -42,6 +43,19 @@ export default function BlogAdmin() {
             setTab('list');
             load();
             setTimeout(() => setMsg(''), 2000);
+        } else {
+            setMsg('Hata oluştu');
+        }
+    };
+
+    const fixAllSlugs = async () => {
+        if (!confirm('Tüm blog yazılarının URL\'lerini düzeltmek istediğinize emin misiniz?')) return;
+        const res = await fetch('/api/db/blog', { method: 'PATCH' });
+        if (res.ok) {
+            const result = await res.json();
+            setMsg(`✓ ${result.fixed} yazının URL'si düzeltildi!`);
+            load();
+            setTimeout(() => setMsg(''), 3000);
         } else {
             setMsg('Hata oluştu');
         }
@@ -84,7 +98,10 @@ export default function BlogAdmin() {
                     <h1 className="text-2xl font-bold">Blog Yönetimi</h1>
                     <p className="text-xs text-green-600 mt-1">● Veritabanı bağlantılı · {items.length} yazı</p>
                 </div>
-                <button onClick={() => { setEditing(newPost()); setTab('edit'); }} className="bg-black text-white text-xs uppercase tracking-wider px-5 py-2.5 hover:bg-neutral-800 rounded">+ Yeni Yazı</button>
+                <div className="flex gap-2">
+                    <button onClick={fixAllSlugs} className="border border-neutral-300 text-xs uppercase tracking-wider px-4 py-2.5 hover:bg-neutral-50 rounded" title="Tüm URL'leri düzelt">🔧 URL Düzelt</button>
+                    <button onClick={() => { setEditing(newPost()); setTab('edit'); }} className="bg-black text-white text-xs uppercase tracking-wider px-5 py-2.5 hover:bg-neutral-800 rounded">+ Yeni Yazı</button>
+                </div>
             </div>
             {msg && <div className="fixed top-6 right-6 z-50 bg-black text-white px-5 py-3 text-sm font-medium shadow-lg rounded" style={{ animation: 'slideIn .3s ease-out' }}>{msg}</div>}
 

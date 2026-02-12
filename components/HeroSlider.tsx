@@ -233,7 +233,6 @@ export default function HeroSlider() {
                     )}
 
                     <div className="relative z-10 flex items-center justify-center text-white" style={{ minHeight: `${settings.mobileHeight}px` }}>
-                        <style jsx>{`@media (min-width: 768px) { div { min-height: ${settings.height}px !important; } }`}</style>
                         <div className="text-center px-6">
                             <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold tracking-tight">{slide.title}</h1>
                             {slide.subtitle && (

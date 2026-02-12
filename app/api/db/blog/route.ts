@@ -3,6 +3,11 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
+const turkishMap: Record<string, string> = { 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ı': 'i', 'ö': 'o', 'ç': 'c', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'İ': 'i', 'Ö': 'o', 'Ç': 'c' };
+function generateSlug(title: string) {
+    return title.toLowerCase().replace(/[ğüşıöçĞÜŞİÖÇ]/g, c => turkishMap[c] || c).replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
 export async function GET() {
     const posts = await prisma.blogPost.findMany({ orderBy: { order: 'asc' } });
     return NextResponse.json(posts);
@@ -14,7 +19,7 @@ export async function POST(request: NextRequest) {
         const post = await prisma.blogPost.create({
             data: {
                 title: body.title || '',
-                slug: body.slug || body.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || `post-${Date.now()}`,
+                slug: body.slug ? generateSlug(body.slug) : (body.title ? generateSlug(body.title) : `post-${Date.now()}`),
                 excerpt: body.excerpt || null,
                 content: body.content || null,
                 image: body.image || null,
@@ -36,7 +41,7 @@ export async function PUT(request: NextRequest) {
             where: { id: body.id },
             data: {
                 title: body.title,
-                slug: body.slug,
+                slug: body.slug ? generateSlug(body.slug) : undefined,
                 excerpt: body.excerpt,
                 content: body.content,
                 image: body.image,
@@ -58,6 +63,24 @@ export async function DELETE(request: NextRequest) {
         if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
         await prisma.blogPost.delete({ where: { id } });
         return NextResponse.json({ success: true });
+    } catch (e) {
+        return NextResponse.json({ error: String(e) }, { status: 500 });
+    }
+}
+
+// PATCH: bulk fix all slugs
+export async function PATCH() {
+    try {
+        const posts = await prisma.blogPost.findMany();
+        let fixed = 0;
+        for (const post of posts) {
+            const newSlug = generateSlug(post.title || `post-${post.id}`);
+            if (newSlug !== post.slug) {
+                await prisma.blogPost.update({ where: { id: post.id }, data: { slug: newSlug } });
+                fixed++;
+            }
+        }
+        return NextResponse.json({ success: true, fixed, total: posts.length });
     } catch (e) {
         return NextResponse.json({ error: String(e) }, { status: 500 });
     }
