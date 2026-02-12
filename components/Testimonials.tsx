@@ -6,7 +6,7 @@ interface Testimonial {
     id: number;
     name: string;
     company: string;
-    comment: string;
+    text: string;
     avatar: string;
     rating: number;
     active: boolean;
@@ -51,7 +51,7 @@ export default function Testimonials() {
 
                             {/* Comment */}
                             <p className="text-neutral-300 leading-relaxed mb-6 text-sm">
-                                &ldquo;{t.comment}&rdquo;
+                                &ldquo;{t.text}&rdquo;
                             </p>
 
                             {/* Author */}

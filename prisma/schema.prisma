@@ -138,3 +138,32 @@ model SiteSettings {
   updatedAt   DateTime @updatedAt
 }
 
+model QuoteRequest {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  company   String?
+  message   String?  @db.Text
+  items     String   @db.Text  // JSON array of {id, name, category, categoryName, quantity}
+  status    String   @default("pending")  // "pending" | "contacted"
+  note      String?  @db.Text  // Admin note
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  subject   String?
+  message   String   @db.Text
+  fields    String?  @db.Text  // Extra dynamic form fields as JSON
+  status    String   @default("pending")  // "pending" | "contacted"
+  note      String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

@@ -52,11 +52,42 @@ export default function ContactPage() {
             });
     }, []);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [sending, setSending] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSent(true);
-        setFormValues({});
-        setTimeout(() => setSent(false), 4000);
+        setSending(true);
+        try {
+            // Extract known fields from formValues
+            const knownKeys = ['name', 'ad_soyad', 'email', 'e_posta', 'phone', 'telefon', 'tel', 'company', 'firma', 'subject', 'konu', 'message', 'mesaj', 'mesajiniz'];
+            const name = formValues['name'] || formValues['ad_soyad'] || formValues['Ad Soyad'] || '';
+            const email = formValues['email'] || formValues['e_posta'] || formValues['E-posta'] || '';
+            const phone = formValues['phone'] || formValues['telefon'] || formValues['tel'] || formValues['Telefon'] || '';
+            const company = formValues['company'] || formValues['firma'] || formValues['Firma'] || '';
+            const subject = formValues['subject'] || formValues['konu'] || formValues['Konu'] || '';
+            const message = formValues['message'] || formValues['mesaj'] || formValues['mesajiniz'] || formValues['Mesajınız'] || '';
+
+            // Collect extra fields
+            const extraFields: Record<string, string> = {};
+            for (const [key, val] of Object.entries(formValues)) {
+                if (!knownKeys.includes(key.toLowerCase()) && val) {
+                    extraFields[key] = val;
+                }
+            }
+
+            await fetch('/api/db/contact-messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, company, subject, message, fields: Object.keys(extraFields).length > 0 ? extraFields : null }),
+            });
+            setSent(true);
+            setFormValues({});
+            setTimeout(() => setSent(false), 4000);
+        } catch {
+            // silently fail
+        } finally {
+            setSending(false);
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -148,7 +179,8 @@ export default function ContactPage() {
 
                                 <button
                                     type="submit"
-                                    className="w-full bg-black text-white text-xs uppercase tracking-[2px] font-semibold py-4 hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2"
+                                    disabled={sending}
+                                    className="w-full bg-black text-white text-xs uppercase tracking-[2px] font-semibold py-4 hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" />

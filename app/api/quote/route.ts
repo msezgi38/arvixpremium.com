@@ -1,45 +1,56 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 import nodemailer from 'nodemailer';
-import fs from 'fs';
-import path from 'path';
 
 interface QuoteItem {
-    id: string;
-    name: string;
-    category: string;
-    categoryName: string;
-    quantity: number;
+  id: string;
+  name: string;
+  category: string;
+  categoryName: string;
+  quantity: number;
 }
 
-interface QuoteRequest {
-    name: string;
-    email: string;
-    phone: string;
-    company?: string;
-    message?: string;
-    items: QuoteItem[];
+interface QuoteRequestBody {
+  name: string;
+  email: string;
+  phone: string;
+  company?: string;
+  message?: string;
+  items: QuoteItem[];
 }
 
 export async function POST(request: Request) {
-    try {
-        const data: QuoteRequest = await request.json();
+  try {
+    const data: QuoteRequestBody = await request.json();
 
-        if (!data.name || !data.email || !data.phone || !data.items?.length) {
-            return NextResponse.json({ error: 'Eksik bilgi' }, { status: 400 });
-        }
+    if (!data.name || !data.email || !data.phone || !data.items?.length) {
+      return NextResponse.json({ error: 'Eksik bilgi' }, { status: 400 });
+    }
 
-        // Build product table for email
-        const itemRows = data.items.map(item =>
-            `<tr>
+    // Save to database
+    await prisma.quoteRequest.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company || null,
+        message: data.message || null,
+        items: JSON.stringify(data.items),
+      },
+    });
+
+    // Build product table for email
+    const itemRows = data.items.map(item =>
+      `<tr>
         <td style="padding:10px 15px;border-bottom:1px solid #eee;">${item.name}</td>
         <td style="padding:10px 15px;border-bottom:1px solid #eee;">${item.categoryName}</td>
         <td style="padding:10px 15px;border-bottom:1px solid #eee;text-align:center;font-weight:bold;">${item.quantity}</td>
       </tr>`
-        ).join('');
+    ).join('');
 
-        const totalQty = data.items.reduce((s, i) => s + i.quantity, 0);
+    const totalQty = data.items.reduce((s, i) => s + i.quantity, 0);
 
-        const html = `
+    const html = `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
         <div style="background:#000;color:#fff;padding:30px;text-align:center;">
           <h1 style="margin:0;font-size:20px;letter-spacing:4px;">ARVIX PREMIUM</h1>
@@ -85,42 +96,34 @@ export async function POST(request: Request) {
       </div>
     `;
 
-        // Save to quotes log
-        const quotesDir = path.join(process.cwd(), 'data');
-        if (!fs.existsSync(quotesDir)) fs.mkdirSync(quotesDir, { recursive: true });
-        const quotesFile = path.join(quotesDir, 'quotes.json');
-        const quotes = fs.existsSync(quotesFile) ? JSON.parse(fs.readFileSync(quotesFile, 'utf-8')) : [];
-        quotes.push({ ...data, date: new Date().toISOString() });
-        fs.writeFileSync(quotesFile, JSON.stringify(quotes, null, 2), 'utf-8');
+    // Send email (optional - continues even if email fails)
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
 
-        // Send email
-        try {
-            const transporter = nodemailer.createTransport({
-                host: process.env.SMTP_HOST || 'smtp.gmail.com',
-                port: parseInt(process.env.SMTP_PORT || '587'),
-                secure: false,
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASS,
-                },
-            });
-
-            if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-                await transporter.sendMail({
-                    from: `"Arvix Premium" <${process.env.SMTP_USER}>`,
-                    to: process.env.QUOTE_EMAIL || process.env.SMTP_USER,
-                    replyTo: data.email,
-                    subject: `Yeni Teklif Talebi - ${data.name} (${totalQty} Ürün)`,
-                    html,
-                });
-            }
-        } catch (emailErr) {
-            console.error('Email error:', emailErr);
-            // Continue - quote is already saved to file
-        }
-
-        return NextResponse.json({ success: true });
-    } catch {
-        return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+      if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+        await transporter.sendMail({
+          from: `"Arvix Premium" <${process.env.SMTP_USER}>`,
+          to: process.env.QUOTE_EMAIL || process.env.SMTP_USER,
+          replyTo: data.email,
+          subject: `Yeni Teklif Talebi - ${data.name} (${totalQty} Ürün)`,
+          html,
+        });
+      }
+    } catch (emailErr) {
+      console.error('Email error:', emailErr);
+      // Continue - quote is already saved to database
     }
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+  }
 }
