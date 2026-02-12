@@ -40,6 +40,17 @@ export default function MesajlarAdmin() {
         }
     };
 
+    const deleteItem = async (id: string) => {
+        if (!confirm('Bu mesajı silmek istediğinize emin misiniz?')) return;
+        const res = await fetch(`/api/db/contact-messages?id=${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            setMsg('✓ Silindi');
+            load();
+            if (selected?.id === id) setSelected(null);
+            setTimeout(() => setMsg(''), 2000);
+        }
+    };
+
     const parseFields = (jsonStr: string | null): Record<string, string> => {
         if (!jsonStr) return {};
         try { return JSON.parse(jsonStr); } catch { return {}; }
@@ -132,6 +143,7 @@ export default function MesajlarAdmin() {
                             </button>
                         )}
                         <button onClick={() => setSelected(null)} className="border border-neutral-300 text-xs uppercase tracking-wider px-5 py-2.5 hover:bg-neutral-50 rounded">İptal</button>
+                        <button onClick={() => deleteItem(selected.id)} className="ml-auto bg-red-500 text-white text-xs uppercase tracking-wider px-5 py-2.5 hover:bg-red-600 rounded font-semibold">🗑 Sil</button>
                     </div>
                 </div>
             )}
@@ -168,6 +180,7 @@ export default function MesajlarAdmin() {
                                 <td className="px-4 py-3 text-neutral-400 text-xs whitespace-nowrap">{new Date(item.createdAt).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                                 <td className="px-4 py-3">
                                     <button onClick={() => { setSelected(item); setNote(item.note || ''); }} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">Detay</button>
+                                    <button onClick={() => deleteItem(item.id)} className="text-xs text-red-500 hover:text-red-700 font-semibold ml-2">Sil</button>
                                 </td>
                             </tr>
                         ))}

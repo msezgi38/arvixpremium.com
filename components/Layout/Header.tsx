@@ -30,6 +30,7 @@ export default function Header() {
   const [navLinks, setNavLinks] = useState<NavLink[]>([
     { name: 'Biz Kimiz', href: '/hakkimizda', active: true },
     { name: 'Marka & Logo', href: '/marka-logo', active: true },
+    { name: 'Mimari Planlama', href: '/mimari-planlama', active: true },
     { name: 'Blog', href: '/blog', active: true },
     { name: 'SSS', href: '/sss', active: true },
     { name: 'İletişim', href: '/iletisim', active: true },

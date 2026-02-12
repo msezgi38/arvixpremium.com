@@ -47,6 +47,17 @@ export default function TekliflerAdmin() {
         }
     };
 
+    const deleteItem = async (id: string) => {
+        if (!confirm('Bu teklif talebini silmek istediğinize emin misiniz?')) return;
+        const res = await fetch(`/api/db/quotes?id=${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            setMsg('✓ Silindi');
+            load();
+            if (selected?.id === id) setSelected(null);
+            setTimeout(() => setMsg(''), 2000);
+        }
+    };
+
     const parseItems = (jsonStr: string): QuoteItem[] => {
         try { return JSON.parse(jsonStr); } catch { return []; }
     };
@@ -137,6 +148,7 @@ export default function TekliflerAdmin() {
                             </button>
                         )}
                         <button onClick={() => setSelected(null)} className="border border-neutral-300 text-xs uppercase tracking-wider px-5 py-2.5 hover:bg-neutral-50 rounded">İptal</button>
+                        <button onClick={() => deleteItem(selected.id)} className="ml-auto bg-red-500 text-white text-xs uppercase tracking-wider px-5 py-2.5 hover:bg-red-600 rounded font-semibold">🗑 Sil</button>
                     </div>
                 </div>
             )}
@@ -175,6 +187,7 @@ export default function TekliflerAdmin() {
                                     <td className="px-4 py-3 text-neutral-400 text-xs">{new Date(item.createdAt).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                                     <td className="px-4 py-3">
                                         <button onClick={() => { setSelected(item); setNote(item.note || ''); }} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">Detay</button>
+                                        <button onClick={() => deleteItem(item.id)} className="text-xs text-red-500 hover:text-red-700 font-semibold ml-2">Sil</button>
                                     </td>
                                 </tr>
                             );

@@ -23,3 +23,15 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: String(e) }, { status: 500 });
     }
 }
+
+export async function DELETE(request: NextRequest) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
+        await prisma.quoteRequest.delete({ where: { id } });
+        return NextResponse.json({ success: true });
+    } catch (e) {
+        return NextResponse.json({ error: String(e) }, { status: 500 });
+    }
+}
