@@ -9,6 +9,60 @@ interface ImageUploadProps {
     label?: string;
 }
 
+// Convert any image (BMP, PNG, JPG, etc.) to WebP in browser before uploading
+function convertToWebP(file: File, quality = 0.82, maxWidth = 1920): Promise<File> {
+    return new Promise((resolve, reject) => {
+        // If already webp and small, skip conversion
+        if (file.type === 'image/webp' && file.size < 500_000) {
+            resolve(file);
+            return;
+        }
+
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+
+            let w = img.width;
+            let h = img.height;
+
+            // Resize if too wide
+            if (w > maxWidth) {
+                h = Math.round((h * maxWidth) / w);
+                w = maxWidth;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) { reject(new Error('Canvas not supported')); return; }
+
+            ctx.drawImage(img, 0, 0, w, h);
+
+            canvas.toBlob(
+                (blob) => {
+                    if (!blob) { reject(new Error('Conversion failed')); return; }
+                    const baseName = file.name.replace(/\.[^.]+$/, '');
+                    const webpFile = new File([blob], `${baseName}.webp`, { type: 'image/webp' });
+                    resolve(webpFile);
+                },
+                'image/webp',
+                quality
+            );
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            // If conversion fails, use original
+            resolve(file);
+        };
+
+        img.src = url;
+    });
+}
+
 export default function ImageUpload({ value, onChange, folder = 'uploads', label = 'Görsel' }: ImageUploadProps) {
     const [uploading, setUploading] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
@@ -18,18 +72,25 @@ export default function ImageUpload({ value, onChange, folder = 'uploads', label
         if (!file) return;
 
         setUploading(true);
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('folder', folder);
 
         try {
+            // Convert to WebP in browser first (handles BMP, PNG, JPG, etc.)
+            const webpFile = await convertToWebP(file);
+
+            const formData = new FormData();
+            formData.append('file', webpFile);
+            formData.append('folder', folder);
+
             const res = await fetch('/api/upload', { method: 'POST', body: formData });
             const data = await res.json();
             if (data.url) onChange(data.url);
+            else if (data.error) console.error('Upload error:', data.error);
         } catch (err) {
             console.error('Upload error:', err);
         } finally {
             setUploading(false);
+            // Reset input so the same file can be re-selected
+            if (fileRef.current) fileRef.current.value = '';
         }
     };
 
@@ -53,14 +114,14 @@ export default function ImageUpload({ value, onChange, folder = 'uploads', label
                         placeholder="/path/to/image.jpg"
                         className="w-full border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-black"
                     />
-                    <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+                    <input ref={fileRef} type="file" accept="image/*,.bmp" onChange={handleUpload} className="hidden" />
                     <button
                         type="button"
                         onClick={() => fileRef.current?.click()}
                         disabled={uploading}
                         className="mt-2 text-xs bg-black text-white px-4 py-1.5 hover:bg-neutral-800 transition-colors disabled:opacity-50"
                     >
-                        {uploading ? 'Yükleniyor...' : 'Yükle'}
+                        {uploading ? 'Dönüştürülüyor & Yükleniyor...' : 'Yükle'}
                     </button>
                 </div>
             </div>
